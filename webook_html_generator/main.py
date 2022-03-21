@@ -19,7 +19,7 @@ if __name__ == '__main__':
 
     html_generator = Generator(config)
     scheduler = BlockingScheduler(daemon=True)
-    scheduler.add_job(html_generator.make_template, 'interval', seconds=15, start_date='2022-03-14 09:55:00')
+    scheduler.add_job(html_generator.make_templates, 'interval', seconds=15, start_date='2022-03-14 09:55:00')
     scheduler.start()
 
 

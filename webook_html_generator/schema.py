@@ -5,11 +5,12 @@ from typing import List, Optional
 from pydantic import BaseModel, EmailStr
 
 
-class StageChoices(str, enum.Enum):
-    PLANNING = 'planning'
-    REQUISITIONING = 'requisitioning'
-    READY_TO_LAUNCH = 'ready_to_launch'
-    IN_PRODUCTION = 'in_production'
+class EventDisplayConfig(CamelCaseMixin):
+    display_name: str
+    display_type: str
+    room_filter: List[str]
+    output_file_name: bool
+    location_id: int
 
 
 class Token(BaseModel):
@@ -22,18 +23,38 @@ class Login(BaseModel):
     password: str
 
 
-class Person(CamelCaseMixin):
-    personal_email: EmailStr
-    first_name: str
-    middle_name: str
-    last_name: str
-    birth_date: datetime.date
-
-
-class Note(CamelCaseMixin):
+class Location(CamelCaseMixin):
     id: int
-    content: str
-    author: Optional[Person]
+    name: str
+
+
+class Room(CamelCaseMixin):
+    id: int
+    name: str
+    max_capacity: int
+    has_screen: bool
+    location: Optional[Location]
+
+
+class DisplayDetail(CamelCaseMixin):
+    id: int
+    name: str
+    quantity: int
+    room_combo: Optional[List[Room]]
+
+
+class DisplayConfiguration(CamelCaseMixin):
+    id: int
+    name: str
+    description: str
+    all_events: bool
+    room_based: bool
+    quantity: int
+    config_detail: Optional[DisplayDetail]
+
+
+class DisplayConfigurationName(CamelCaseMixin):
+    name: str
 
 
 class Audience(CamelCaseMixin):
@@ -42,37 +63,50 @@ class Audience(CamelCaseMixin):
     icon_class: str
 
 
-class OrganizationType(CamelCaseMixin):
+class ArrangementType(CamelCaseMixin):
+    id: Optional[int]
+    name: str
+    name_en: Optional[str]
+
+
+class Arrangement(CamelCaseMixin):
     id: int
     name: str
-
-
-class Organization(CamelCaseMixin):
-    name: str
-    organization_number: int
-    organization_type: Optional[OrganizationType]
-
-
-class TimeLineEvent(CamelCaseMixin):
-    id: int
-    content: Optional[str]
-    stamp: Optional[datetime.datetime]
-
-
-class ArrangementBase(CamelCaseMixin):
-    name: str
-    stages: StageChoices
     starts: datetime.date
     ends: datetime.date
-
-
-class ArrangementRead(ArrangementBase):
-    id: int
     audience: Optional[Audience]
-    responsible: Optional[Person]
+    display_configurations: Optional[List[DisplayConfigurationName]]
+    arrangement_type: Optional[ArrangementType]
 
-    timeline_events: List[TimeLineEvent]
-    planners: List[Person]
-    people_participants: List[Person]
-    organization_participants: List[Organization]
-    notes: List[Note]
+
+class Event(CamelCaseMixin):
+    id: int
+    title: str
+    title_en: Optional[str]
+    start: datetime.datetime
+    end: datetime.datetime
+    all_day: bool
+    arrangement: Arrangement
+    rooms: Optional[List[Room]]
+
+
+class DisplayData(CamelCaseMixin):
+    id: int
+    start: datetime.datetime
+    end: datetime.datetime
+    all_day: bool
+    arrangement_name: str = ""
+    audience_name: str = ""
+    audience_icon_class: str = ""
+    arrangement_type_name: str = ""
+    room_name: str = ""
+
+
+class DisplayCombo(CamelCaseMixin):
+    title: str
+    css_path: Optional[str]
+    data: List[DisplayData]
+
+
+
+
