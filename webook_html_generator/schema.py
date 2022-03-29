@@ -36,30 +36,46 @@ class Room(CamelCaseMixin):
     location: Optional[Location]
 
 
-class DisplayDetail(CamelCaseMixin):
-    id: int
+class LayoutSetting(CamelCaseMixin):
     name: str
+    html_template: str
+    css_template: str
+    file_output_path: str
+
+
+class ScreenResource(CamelCaseMixin):
+    name: str
+    name_en: Optional[str]
     quantity: int
-    room_combo: Optional[List[Room]]
+    room_screen: bool
+    location_id: Optional[int]
 
 
-class DisplayConfiguration(CamelCaseMixin):
-    id: int
+class ScreenGroup(CamelCaseMixin):
+    group_name: str
+    group_name_en: Optional[str]
+    quantity: int
+    screens:  Optional[List[ScreenResource]]
+
+
+class DisplayLayout(CamelCaseMixin):
     name: str
-    description: str
-    all_events: bool
     room_based: bool
-    quantity: int
-    config_detail: Optional[DisplayDetail]
+    active: bool
+
+    setting: Optional[LayoutSetting]
+    screens: Optional[List[ScreenResource]]
+    groups: Optional[List[ScreenGroup]]
 
 
-class DisplayConfigurationName(CamelCaseMixin):
+class DisplayLayoutName(CamelCaseMixin):
     name: str
 
 
 class Audience(CamelCaseMixin):
     id: int
     name: str
+    name_en: Optional[str]
     icon_class: str
 
 
@@ -72,10 +88,11 @@ class ArrangementType(CamelCaseMixin):
 class Arrangement(CamelCaseMixin):
     id: int
     name: str
+    name_en: Optional[str]
     starts: datetime.date
     ends: datetime.date
     audience: Optional[Audience]
-    display_configurations: Optional[List[DisplayConfigurationName]]
+    display_layouts: Optional[List[DisplayLayoutName]]
     arrangement_type: Optional[ArrangementType]
 
 
@@ -87,6 +104,7 @@ class Event(CamelCaseMixin):
     end: datetime.datetime
     all_day: bool
     arrangement: Arrangement
+    display_layouts: Optional[List[DisplayLayoutName]]
     rooms: Optional[List[Room]]
 
 
@@ -106,6 +124,9 @@ class DisplayCombo(CamelCaseMixin):
     title: str
     css_path: Optional[str]
     data: List[DisplayData]
+
+
+
 
 
 
