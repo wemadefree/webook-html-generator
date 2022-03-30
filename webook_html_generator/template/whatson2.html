@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ display.title }}</title>
+    <link rel="stylesheet" href="whatson.css" />
+</head>
+<body>
+    <div class="container">
+         {% for ev in display.data %}
+          <ul>
+
+              <li>Arrangement name: {{ev.arrangement_name}}</li>
+              <li>Arrangement type: {{ev.arrangement_type_name}}</li>
+              <li>Room name: {{ev.room_name}}</li>
+              <li>Audience name: {{ev.audience_name}}</li>
+              <li>Audience class icon: {{ev.audience_icon_class}}</li>
+              <li>Starting at: {{ev.start.strftime("%H:%M")}}</li>
+              <li>Ending at: {{ev.end.strftime("%H:%M")}}</li>
+
+          </ul>
+         {% endfor %}
+    </div>
+  </div>
+</body>
+</html>

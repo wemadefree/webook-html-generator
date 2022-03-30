@@ -109,13 +109,11 @@ class Event(CamelCaseMixin):
 
 
 class DisplayData(CamelCaseMixin):
-    id: int
-    start: datetime.datetime
-    end: datetime.datetime
-    all_day: bool
+    starting_soon: str = ""
+    event_time: str = ""
     arrangement_name: str = ""
     audience_name: str = ""
-    audience_icon_class: str = ""
+    audience_icon: str = ""
     arrangement_type_name: str = ""
     room_name: str = ""
 
