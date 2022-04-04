@@ -62,7 +62,8 @@ class Generator:
 
     def convert_to_display_data(self, event: Event, room_name: str = "", international: bool = False):
         display_data = DisplayData()
-        display_data.audience_icon = event.arrangement.audience.icon_class
+        if event.arrangement.audience:
+            display_data.audience_icon = event.arrangement.audience.icon_class
         display_data.room_name = room_name
 
         days_in_no = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"]
@@ -79,19 +80,21 @@ class Generator:
                 display_data.event_time = "{0} {1}-{2}".format(current_day_no, start_time, end_time)
 
         now = datetime.datetime.now()
-        in_half_hour = datetime.datetime.now() + datetime.timedelta(minutes=30)
+        in_half_hour = datetime.datetime.now() + datetime.timedelta(minutes=530)
 
         if not international:
             if event.start >now and event.start < in_half_hour:
                 display_data.starting_soon = "Starter snart"
             display_data.arrangement_name = event.arrangement.name
-            display_data.audience_name = event.arrangement.audience.name
+            if event.arrangement.audience:
+                display_data.audience_name = event.arrangement.audience.name
             display_data.arrangement_type_name = event.arrangement.arrangement_type.name
         else:
             if event.start > now and event.start < in_half_hour:
                 display_data.starting_soon = "Starting soon"
             display_data.arrangement_name = event.arrangement.name_en
-            display_data.audience_name = event.arrangement.audience.name_en
+            if event.arrangement.audience:
+                display_data.audience_name = event.arrangement.audience.name_en
             display_data.arrangement_type_name = event.arrangement.arrangement_type.name_en
 
         return display_data
@@ -110,8 +113,13 @@ class Generator:
             }
 
             filled_template = template.render(display=display, **context)
-            with open(f'html/whatson/{key}.html', 'w', encoding="utf-8") as f:
+            with open(f'html/whatson/{self._rename(key)}.html', 'w', encoding="utf-8") as f:
                 f.write(filled_template)
+
+    def _rename(self, name):
+        words = name.split(" ")
+        words_lower = [word.lower().replace(",", "").replace(".", "") for word in words]
+        return "_".join(words_lower)
 
     def arrange_display_data(self, all_events: List[Event]) -> defaultdict:
         screen_showcase = defaultdict(list)
@@ -147,7 +155,8 @@ class Generator:
         return screen_showcase
 
     def _set_screen_showcase(self, screen_showcase: List, event: Event, room_name: str = ""):
-        screen_showcase.append(self.convert_to_display_data(event, room_name=room_name))
+        if event.arrangement.name:
+            screen_showcase.append(self.convert_to_display_data(event, room_name=room_name))
         if event.arrangement.name_en:
             screen_showcase.append(self.convert_to_display_data(event, room_name=room_name, international=True))
 
