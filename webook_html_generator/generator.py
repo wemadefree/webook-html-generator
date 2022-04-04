@@ -121,7 +121,6 @@ class Generator:
         # Create new directory structure for new key
         try:
             shutil.copytree('template/whatson', 'html/whatson/' + screen_name + '/')
-            os.makedirs('html/' + screen_name)
         except OSError as e:
             print(f"Directory {screen_name} already exists!")
 
