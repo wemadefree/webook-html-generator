@@ -1,4 +1,6 @@
 import datetime
+import os
+import shutil
 import json
 import requests
 import jinja2
@@ -102,19 +104,29 @@ class Generator:
     def render_html(self, all_events: List[Event]):
         showcase_dict = self.arrange_display_data(all_events)
         for key in showcase_dict:
-            print(showcase_dict[key])
-            with open(f'template/whatson.html', 'r', encoding="utf-8") as f:
-                contents = f.read()
-            template = jinja2.Template(contents)
-            display = DisplayCombo(title=key, data=showcase_dict[key])
-            context = {
-                'now': datetime.datetime.now(),
-                'in_half_hour': datetime.datetime.now()+datetime.timedelta(minutes=30),
-            }
+            self.render_whatson(title=key, data=showcase_dict[key])
 
-            filled_template = template.render(display=display, **context)
-            with open(f'html/whatson/{self._rename(key)}.html', 'w', encoding="utf-8") as f:
-                f.write(filled_template)
+    def render_whatson(self, title: str, data: Event):
+        with open(f'template/whatson/index.html', 'r', encoding="utf-8") as f:
+            contents = f.read()
+        template = jinja2.Template(contents)
+        display = DisplayCombo(title=title, data=data)
+        context = {
+            'now': datetime.datetime.now(),
+            'in_half_hour': datetime.datetime.now() + datetime.timedelta(minutes=30),
+        }
+
+        filled_template = template.render(display=display, **context)
+        screen_name = self._rename(title)
+        # Create new directory structure for new key
+        try:
+            shutil.copytree('template/whatson', 'html/whatson/' + screen_name + '/')
+            os.makedirs('html/' + screen_name)
+        except OSError as e:
+            print(f"Directory {screen_name} already exists!")
+
+        with open(f'html/whatson/{screen_name}/index.html', 'w', encoding="utf-8") as f:
+            f.write(filled_template)
 
     def _rename(self, name):
         words = name.split(" ")
