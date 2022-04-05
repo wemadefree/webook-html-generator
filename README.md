@@ -7,5 +7,5 @@ In order to work properly, you need to rename the .env_sample file to .env and f
 
 ## Poetry
 The application relies on the Poetry dependancy management system:
-Install poetry: https://realpython.com/dependency-management-python-poetry/#take-care-of-prerequisites
-Work with poetry: https://realpython.com/dependency-management-python-poetry/#work-with-python-poetry
+- Install poetry: https://realpython.com/dependency-management-python-poetry/#take-care-of-prerequisites
+- Work with poetry: https://realpython.com/dependency-management-python-poetry/#work-with-python-poetry
