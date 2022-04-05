@@ -8,4 +8,11 @@ In order to work properly, you need to rename the .env_sample file to .env and f
 ## Poetry
 The application relies on the Poetry dependancy management system:
 - Install poetry: https://realpython.com/dependency-management-python-poetry/#take-care-of-prerequisites
+- In top folder (where poetry.toml file is located) create virtual environment
+-  ```bash
+poetry env use python3
+or 
+poetry env use python
+
+```
 - Work with poetry: https://realpython.com/dependency-management-python-poetry/#work-with-python-poetry
