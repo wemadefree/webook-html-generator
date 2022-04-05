@@ -1,5 +1,4 @@
 import datetime
-import enum
 from common import CamelCaseMixin
 from typing import List, Optional
 from pydantic import BaseModel, EmailStr

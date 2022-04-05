@@ -1,12 +1,12 @@
 import datetime
-import os
-import shutil
 import json
-import requests
 import jinja2
+import requests
+import shutil
 from typing import List
 from collections import defaultdict
-from webook_html_generator.schema import DisplayLayout, Login, Token, Event, DisplayData, DisplayCombo
+from webook_html_generator.schema import DisplayData, DisplayLayout,\
+    DisplayCombo, Login, Token, Event
 from webook_html_generator.config import Config
 
 
@@ -36,7 +36,8 @@ class Generator:
     def _get_display_layouts(self) -> List[DisplayLayout]:
         """Returns the display settings for a request"""
         try:
-            req = requests.get(self.config.layout_url)
+            layout_url = self.config.base_url+self.config.layout_url
+            req = requests.get(layout_url)
             req.raise_for_status()
         except requests.exceptions.HTTPError as err:
             print("Http Login Error:", err)
@@ -50,7 +51,8 @@ class Generator:
 
     def _get_next_events(self, location_name: str) -> List[Event]:
         try:
-            req = requests.get(self.config.events_url)
+            event_url = self.config.base_url + self.config.events_url
+            req = requests.get(event_url)
             req.raise_for_status()
         except requests.exceptions.HTTPError as err:
             print("Http Login Error:", err)
@@ -129,7 +131,7 @@ class Generator:
 
     def _rename(self, name):
         words = name.split(" ")
-        words_lower = [word.lower().replace(",", "").replace(".", "") for word in words]
+        words_lower = [word.lower().replace(",", "").replace(".", "").replace("+", "") for word in words]
         return "_".join(words_lower)
 
     def arrange_display_data(self, all_events: List[Event]) -> defaultdict:
