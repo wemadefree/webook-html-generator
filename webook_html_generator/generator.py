@@ -157,13 +157,15 @@ class Generator:
                             for group in layout.groups:
                                 for screen in group.screens:
                                     if screen.name == room.name:
-                                        self._set_screen_showcase(screen_showcase[group.name], event, room_name=group.group_name)
+                                        self._set_screen_showcase(screen_showcase[group.name], event,
+                                                                  room_name=group.group_name)
                             if room.name in regular_screen_names:
                                 self._set_screen_showcase(screen_showcase[room.name], event, room_name=room.name)
                     else:
                         if event.rooms:
                             room_names = [room.name for room in event.rooms]
-                            self._set_screen_showcase(screen_showcase[layout.name], event, room_name=",".join(room_names))
+                            self._set_screen_showcase(screen_showcase[layout.name], event,
+                                                      room_name=",".join(room_names))
 
         return screen_showcase
 
