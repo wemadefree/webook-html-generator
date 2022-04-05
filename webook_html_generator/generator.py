@@ -137,7 +137,7 @@ class Generator:
     def arrange_display_data(self, all_events: List[Event]) -> defaultdict:
         screen_showcase = defaultdict(list)
         for layout in self.layouts:
-            if layout.room_based:
+            if layout.is_room_based:
                 for screen in layout.screens:
                     screen_showcase[screen.name] = []
                 for group in layout.groups:
@@ -152,7 +152,7 @@ class Generator:
                 evt_layout_names = [layout.name for layout in event.display_layouts]
 
                 if layout.name in arr_layout_names and layout.name in evt_layout_names:
-                    if layout.room_based:
+                    if layout.is_room_based:
                         for room in event.rooms:
                             for group in layout.groups:
                                 for screen in group.screens:

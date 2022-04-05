@@ -46,7 +46,7 @@ class ScreenResource(CamelCaseMixin):
     name: str
     name_en: Optional[str]
     quantity: int
-    room_screen: bool
+    is_room_screen: bool
     location_id: Optional[int]
 
 
@@ -59,9 +59,9 @@ class ScreenGroup(CamelCaseMixin):
 
 class DisplayLayout(CamelCaseMixin):
     name: str
-    room_based: bool
-    active: bool
-
+    is_room_based: bool
+    is_active: bool
+    all_events: bool
     setting: Optional[LayoutSetting]
     screens: Optional[List[ScreenResource]]
     groups: Optional[List[ScreenGroup]]
