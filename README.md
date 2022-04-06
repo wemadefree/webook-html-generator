@@ -10,5 +10,8 @@ The application relies on the Poetry dependancy management system:
 - Install python3.8 version. In linux ```sudo apt install python3.8```
 - Install poetry: https://realpython.com/dependency-management-python-poetry/#take-care-of-prerequisites
 - In top folder (where poetry.toml file is located) create virtual environment  ```poetry env use python3``` or  ```poetry env use python```
-- Select poetry environment in Pycharm or Visual studio code. Optionaly you may need install explicitly all dependancies  ```poetry install``` from top folder
+- Create shell to activate virtual envirnment ```poetry shell```
+- Install necessary dependancies ```poetry install```
+- Run app ```python main.py```
+- Optionally you colud use  poetry environment in Pycharm or Visual studio code. 
 - Further info about work with poetry can be found in: https://realpython.com/dependency-management-python-poetry/#work-with-python-poetry
