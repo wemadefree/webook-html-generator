@@ -7,6 +7,7 @@ In order to work properly, you need to rename the .env_sample file to .env and f
 
 ## Poetry
 The application relies on the Poetry dependancy management system:
+- Install python3.8 version. In linux ```sudo apt install python3.8```
 - Install poetry: https://realpython.com/dependency-management-python-poetry/#take-care-of-prerequisites
 - In top folder (where poetry.toml file is located) create virtual environment  ```poetry env use python3``` or  ```poetry env use python```
 - Select poetry environment in Pycharm or Visual studio code. Optionaly you may need install explicitly all dependancies  ```poetry install``` from top folder
