@@ -1,7 +1,10 @@
 import datetime
+import pytz
 from common import CamelCaseMixin
 from typing import List, Optional
 from pydantic import BaseModel, EmailStr
+
+utc = pytz.UTC
 
 
 class EventDisplayConfig(CamelCaseMixin):
@@ -32,6 +35,7 @@ class Room(CamelCaseMixin):
     name: str
     max_capacity: int
     has_screen: bool
+    location_id: Optional[int]
     location: Optional[Location]
 
 
@@ -43,11 +47,10 @@ class LayoutSetting(CamelCaseMixin):
 
 
 class ScreenResource(CamelCaseMixin):
-    name: str
-    name_en: Optional[str]
-    quantity: int
-    is_room_screen: bool
-    location_id: Optional[int]
+    screen_model: str
+    items_shown: Optional[str]
+    room_id: int
+    room: Optional[Room]
 
 
 class ScreenGroup(CamelCaseMixin):
@@ -88,11 +91,14 @@ class Arrangement(CamelCaseMixin):
     id: int
     name: str
     name_en: Optional[str]
-    starts: datetime.date
-    ends: datetime.date
+    starts: Optional[datetime.date]
+    ends: Optional[datetime.date]
+    meeting_place: Optional[str]
     audience: Optional[Audience]
     display_layouts: Optional[List[DisplayLayoutName]]
     arrangement_type: Optional[ArrangementType]
+    location_id: Optional[int]
+    location: Optional[Location]
 
 
 class Event(CamelCaseMixin):
@@ -107,6 +113,9 @@ class Event(CamelCaseMixin):
     rooms: Optional[List[Room]]
 
 
+days_in_no = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"]
+
+
 class DisplayData(CamelCaseMixin):
     starting_soon: str = ""
     event_time: str = ""
@@ -116,12 +125,46 @@ class DisplayData(CamelCaseMixin):
     arrangement_type_name: str = ""
     room_name: str = ""
 
+    def set_fields(self, event: Event, room_name: str = "", international: bool = False):
+        if event.arrangement.audience:
+            self.audience_icon = event.arrangement.audience.icon_class
+        self.room_name = room_name
+
+        start_time = event.start.strftime("%H.%M")
+        end_time = event.end.strftime("%H.%M")
+        current_day_no = days_in_no[event.start.weekday()]
+        current_day_en = event.start.strftime('%A')
+        if event.start.date() == datetime.date.today():
+            self.event_time = "{0}-{1}".format(start_time, end_time)
+        else:
+            if international:
+                self.event_time = "{0} {1}-{2}".format(current_day_en, start_time, end_time)
+            else:
+                self.event_time = "{0} {1}-{2}".format(current_day_no, start_time, end_time)
+
+        now = datetime.datetime.now().replace(tzinfo=utc)
+        in_half_hour = (datetime.datetime.now() + datetime.timedelta(minutes=530)).replace(tzinfo=utc)
+
+        if not international:
+            if event.start > now and event.start < in_half_hour:
+                self.starting_soon = "Starter snart"
+            self.arrangement_name = event.arrangement.name
+            if event.arrangement.audience:
+                self.audience_name = event.arrangement.audience.name
+            self.arrangement_type_name = event.arrangement.arrangement_type.name
+        else:
+            if event.start > now and event.start < in_half_hour:
+                self.starting_soon = "Starting soon"
+            self.arrangement_name = event.arrangement.name_en
+            if event.arrangement.audience:
+                self.audience_name = event.arrangement.audience.name_en
+            self.arrangement_type_name = event.arrangement.arrangement_type.name_en
+
 
 class DisplayCombo(CamelCaseMixin):
     title: str
     css_path: Optional[str]
     data: List[DisplayData]
-
 
 
 

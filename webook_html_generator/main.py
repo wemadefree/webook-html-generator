@@ -17,13 +17,13 @@ if __name__ == '__main__':
         raise ValueError("Cannot generate config file")
         exit(1)
 
-    html_generator = Generator(config)
+    generator = Generator(config)
     scheduler = BlockingScheduler(daemon=True)
 
     minutes = int(config.scheduler_interval_in_min)
     seconds = int(config.scheduler_interval_in_sec)
     start_date = '2022-03-14 09:55:00'
-    scheduler.add_job(html_generator.make_templates, 'interval', minutes=minutes,
+    scheduler.add_job(generator.handler, 'interval', minutes=minutes,
                       seconds=seconds, start_date=start_date)
     scheduler.start()
 
