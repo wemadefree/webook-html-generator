@@ -16,7 +16,6 @@ class Generator:
         self.config = config
         self.data_handler: DataHandler = None
         self.show_structure = None
-        self.initialize()
 
     def _prepare_folder_show_structure(self):
         """screendisplay->location->room_name|layout|meeeting_place"""
