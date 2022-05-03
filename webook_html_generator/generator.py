@@ -29,7 +29,7 @@ class Generator:
                         shutil.copytree('template/whatson',
                                         f'{self.config.upload_dir}/{slugify(loc.name)}/{slugify(room.name)}/', dirs_exist_ok=True)
                 except Exception as ex:
-                    print(f"Error in preparing folder structure: Details: {ex}")
+                    print(f"{datetime.datetime.now()} - Error in preparing folder structure: Details: {ex}")
             for layout in self.data_handler.layouts:
                 try:
                     if not layout.is_room_based:
@@ -37,7 +37,7 @@ class Generator:
                         shutil.copytree('template/whatson',
                                         f'{self.config.upload_dir}/{slugify(loc.name)}/{slugify(layout.name)}/', dirs_exist_ok=True)
                 except Exception as ex:
-                    print(f"Error in preparing folder structure: Details: {ex}")
+                    print(f"{datetime.datetime.now()} - Error in preparing folder structure: Details: {ex}")
             for screen_res in self.data_handler.screens:
                 try:
                     if not screen_res.room_id:
@@ -46,7 +46,7 @@ class Generator:
                                         f'{self.config.upload_dir}/{slugify(loc.name)}/'f'{slugify(screen_res.screen_model)}/',
                                         dirs_exist_ok=True)
                 except Exception as ex:
-                    print(f"Error in preparing folder structure: Details: {ex}")
+                    print(f"{datetime.datetime.now()} - Error in preparing folder structure: Details: {ex}")
 
     def arrange_for_display(self, all_events: List[Event]):
         layout_dict = {layout.name: layout for layout in self.data_handler.layouts}
@@ -75,7 +75,17 @@ class Generator:
                                     self.adding_to_screen_showcase(self.show_structure.get(sl).get(se),
                                                          event, room_name=event.arrangement.meeting_place)
             except Exception as ex:
-                print(f"Error in arranging events: Details: {ex}")
+                print(f"{datetime.datetime.now()} - Error in arranging events: Details: {ex}")
+
+    def _copy_mmg_route(self, dest_part: str ='whatson/mmg'):
+        try:
+            shutil.copytree(f'{self.config.upload_dir}/{self.config.mmg_dir}',
+                            f'{self.config.upload_dir}/{dest_part}/', dirs_exist_ok=True)
+        except Exception as ex:
+            print(f"{datetime.datetime.now()} - Error in copy mmg files: Details: {ex}")
+
+    def custom_activities(self):
+        self._copy_mmg_route()
 
     def adding_to_screen_showcase(self, screen_showcase: List, event: Event, room_name: str = ""):
         if event.arrangement.name:
@@ -113,10 +123,11 @@ class Generator:
                     with open(f'{self.config.upload_dir}/{loc}/{key}/index.html', 'w', encoding="utf-8") as f:
                         f.write(filled_template)
                 except Exception as ex:
-                    print(f"Error in rendering {loc}/{key} html: Details: {ex}")
+                    print(f"{datetime.datetime.now()} - Error in rendering {loc}/{key} html: Details: {ex}")
+        self.custom_activities()
 
     def handler(self):
-        print(f"Generating html in: {datetime.datetime.now()}")
+        print(f"{datetime.datetime.now()} - Try to generate html")
         self.initialize()
         while not self.data_handler.validate():
             self.initialize()
