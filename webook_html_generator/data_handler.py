@@ -31,7 +31,6 @@ class DataHandler:
 
     def _get_token(self):
         """Returns the token for a request"""
-        print(self.config.__dict__)
         login = Login(username=self.config.user_name, password=self.config.password)
         try:
             req = requests.post(self.config.login_url, data=login.__dict__)
@@ -46,7 +45,6 @@ class DataHandler:
         try:
             screen_url = self.config.base_url + url
             headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer {}'.format(self.token.access_token)}
-            print(headers)
             req = requests.get(screen_url, headers=headers)
             req.raise_for_status()
             return req
@@ -60,13 +58,11 @@ class DataHandler:
         try:
             req: requests.Response = self._make_request(self.config.layout_url)
             setting_dict = json.loads(req.content)
-            print(setting_dict)
             settings: List[DisplayLayout] = []
             for sett in setting_dict:
                 settings.append(DisplayLayout(**sett))
             return settings
-        except Exception as ex:
-            print(ex)
+        except:
             return None
 
     def _get_screens(self) -> List[ScreenResource]:
@@ -78,8 +74,7 @@ class DataHandler:
             for sett in screen_dict:
                 screens.append(ScreenResource(**sett))
             return screens
-        except Exception as ex:
-            print(ex)
+        except:
             return None
 
     def _get_rooms(self) -> List[Room]:
@@ -91,8 +86,7 @@ class DataHandler:
             for sett in room_dict:
                 rooms.append(Room(**sett))
             return rooms
-        except Exception as ex:
-            print(ex)
+        except:
             return None
 
     def _get_next_events(self) -> List[Event]:
@@ -104,8 +98,7 @@ class DataHandler:
             for ev in event_dict:
                 events.append(Event(**ev))
             return events
-        except Exception as ex:
-            print(ex)
+        except:
             return None
 
     def _get_locations(self) -> List[Location]:
@@ -117,6 +110,5 @@ class DataHandler:
             for l in loc_dict:
                 locs.append(Location(**l))
             return locs
-        except Exception as ex:
-            print(ex)
+        except:
             return None
