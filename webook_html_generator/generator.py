@@ -28,7 +28,7 @@ class Generator:
                     if room.location_id == loc.id:
                         self.show_structure[slugify(loc.name)][slugify(room.name)] = list()
                         shutil.copytree('template/whatson',
-                                        f'html/{slugify(loc.name)}/{slugify(room.name)}/', dirs_exist_ok=True)
+                                        f'{self.config.upload_dir}/{slugify(loc.name)}/{slugify(room.name)}/', dirs_exist_ok=True)
                 except Exception as ex:
                     print(f"Error in preparing folder structure: Details: {ex}")
             for layout in self.data_handler.layouts:
@@ -36,7 +36,7 @@ class Generator:
                     if not layout.is_room_based:
                         self.show_structure[slugify(loc.name)][slugify(slugify(layout.name))] = list()
                         shutil.copytree('template/whatson',
-                                        f'html/{slugify(loc.name)}/{slugify(layout.name)}/', dirs_exist_ok=True)
+                                        f'{self.config.upload_dir}/{slugify(loc.name)}/{slugify(layout.name)}/', dirs_exist_ok=True)
                 except Exception as ex:
                     print(f"Error in preparing folder structure: Details: {ex}")
             for screen_res in self.data_handler.screens:
@@ -44,7 +44,7 @@ class Generator:
                     if not screen_res.room_id:
                         self.show_structure[slugify(loc.name)][slugify(slugify(screen_res.screen_model))] = list()
                         shutil.copytree('template/whatson',
-                                        f'html/{slugify(loc.name)}/'f'{slugify(screen_res.screen_model)}/',
+                                        f'{self.config.upload_dir}/{slugify(loc.name)}/'f'{slugify(screen_res.screen_model)}/',
                                         dirs_exist_ok=True)
                 except Exception as ex:
                     print(f"Error in preparing folder structure: Details: {ex}")
@@ -111,7 +111,7 @@ class Generator:
                         'in_half_hour': datetime.datetime.now() + datetime.timedelta(minutes=30),
                     }
                     filled_template = template.render(display=display, **context)
-                    with open(f'html/{loc}/{key}/index.html', 'w', encoding="utf-8") as f:
+                    with open(f'{self.config.upload_dir}/{loc}/{key}/index.html', 'w', encoding="utf-8") as f:
                         f.write(filled_template)
                 except Exception as ex:
                     print(f"Error in rendering {loc}/{key} html: Details: {ex}")

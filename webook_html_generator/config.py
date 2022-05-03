@@ -15,5 +15,6 @@ class Config:
         self.layout_url = os.getenv('LAYOUT_URL')
         self.scheduler_interval_in_sec = os.getenv('SCHEDULER_INTERVAL_SEC')
         self.scheduler_interval_in_min = os.getenv('SCHEDULER_INTERVAL_MIN')
+        self.upload_dir = os.getenv('UPLOAD_DIR')
 
 
