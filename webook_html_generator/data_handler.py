@@ -1,3 +1,4 @@
+import datetime
 import json
 import requests
 from typing import List
@@ -18,6 +19,11 @@ class DataHandler:
         self.events: List[Event] = None
         self.initialize()
 
+    def validate(self):
+        if self.layouts and self.screens and self.rooms and self.locations and self.events:
+            return True
+        return False
+
     def initialize(self):
         self._get_token()
         self.layouts: List[DisplayLayout] = self._get_display_layouts()
@@ -31,14 +37,14 @@ class DataHandler:
 
     def _get_token(self):
         """Returns the token for a request"""
+        self.token = None
         login = Login(username=self.config.user_name, password=self.config.password)
         try:
             req = requests.post(self.config.login_url, data=login.__dict__)
             req.raise_for_status()
+            self.token = Token(**json.loads(req.content))
         except requests.exceptions.HTTPError as err:
-            print("Http Login Error:", err)
-            self.token = None
-        self.token = Token(**json.loads(req.content))
+            print(f"{datetime.datetime.now()} - Unable to get/refresh token . Details: {err}")
 
     def _make_request(self, url: str) -> requests.Response:
         """Returns the screenresources for a request"""
@@ -49,7 +55,7 @@ class DataHandler:
             req.raise_for_status()
             return req
         except requests.exceptions.HTTPError as err:
-            print("Http Login Error:", err)
+            print(f"{datetime.datetime.now()} - Http Login Error:", err)
             return None
 
     def _get_display_layouts(self) -> List[DisplayLayout]:
