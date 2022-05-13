@@ -34,8 +34,14 @@ class Generator:
                 try:
                     if not layout.is_room_based:
                         self.show_structure[slugify(loc.name)][slugify(slugify(layout.name))] = list()
-                        shutil.copytree('template/whatson',
-                                        f'{self.config.upload_dir}/{slugify(loc.name)}/{slugify(layout.name)}/', dirs_exist_ok=True)
+                        if slugify(layout.name) == "mmg":
+                            shutil.copytree('template/mmg',
+                                            f'{self.config.upload_dir}/{slugify(loc.name)}/{slugify(layout.name)}/',
+                                            dirs_exist_ok=True)
+                        else:
+                            shutil.copytree('template/whatson',
+                                            f'{self.config.upload_dir}/{slugify(loc.name)}/{slugify(layout.name)}/',
+                                            dirs_exist_ok=True)
                 except Exception as ex:
                     print(f"{datetime.datetime.now()} - Error in preparing folder structure: Details: {ex}")
             for screen_res in self.data_handler.screens:
@@ -43,7 +49,7 @@ class Generator:
                     if not screen_res.room_id:
                         self.show_structure[slugify(loc.name)][slugify(slugify(screen_res.screen_model))] = list()
                         shutil.copytree('template/whatson',
-                                        f'{self.config.upload_dir}/{slugify(loc.name)}/'f'{slugify(screen_res.screen_model)}/',
+                                        f'{self.config.upload_dir}/{slugify(loc.name)}/{slugify(screen_res.screen_model)}/',
                                         dirs_exist_ok=True)
                 except Exception as ex:
                     print(f"{datetime.datetime.now()} - Error in preparing folder structure: Details: {ex}")
