@@ -114,8 +114,12 @@ class Generator:
         for loc in self.show_structure:
             for key in self.show_structure[loc]:
                 try:
-                    with open(f'template/whatson/index.html', 'r', encoding="utf-8") as f:
-                        contents = f.read()
+                    if key == "mmg":
+                        with open(f'template/mmg/index.html', 'r', encoding="utf-8") as f:
+                            contents = f.read()
+                    else:
+                        with open(f'template/whatson/index.html', 'r', encoding="utf-8") as f:
+                            contents = f.read()
                     template = jinja2.Template(contents)
                     display = DisplayCombo(title=key, data=self.show_structure[loc][key])
                     context = {

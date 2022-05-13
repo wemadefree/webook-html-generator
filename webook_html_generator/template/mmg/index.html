@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Nasjonalmuseet - Hva skjer</title>
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <link href="./css/nasjonalmuseet-hva-skjer.css" rel="stylesheet" type="text/css">
+  <style>
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+</style>
+</head>
+<body>
+      <div class="container">
+    <h1 class="title">Hva skjer / What’s on</h1>
+    {% for ev in display.data %}
+            <div class="event">
+      <div class="event-info">
+
+
+        <div class="event-info-item creme">
+          <div>{{ev.arrangement_type_name}}</div>
+        </div>
+         {% if ev.audience_name|length %}
+            <div class="event-info-item green">
+
+              <div>{{ev.audience_name}}</div>
+                <div class="icon is--behind-text">{{ev.audience_icon}}</div>
+
+            </div>
+          {% endif %}
+         {% if ev.starting_soon|length %}
+          <div class="event-info-item red">
+              <div>{{ev.starting_soon}}</div>
+          </div>
+         {% endif %}
+        <div class="event-info-item">
+          <div class="icon"></div>
+          <div>{{ev.event_time}}</div>
+        </div>
+        <div class="event-info-item">
+          <div class="icon"></div>
+          <div>{{ev.room_name}}</div>
+        </div>
+      </div>
+      <h2 class="event-title">{{ev.arrangement_name}}</h2>
+    </div>
+      {% endfor %}
+
+
+  </div>
+</body>
+</html>
