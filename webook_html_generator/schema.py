@@ -123,7 +123,7 @@ class DisplayData(CamelCaseMixin):
     audience_name: str = ""
     audience_icon: str = ""
     arrangement_type_name: str = ""
-    room_name: str = ""
+    room_name: Optional[str] = ""
 
     def set_fields(self, event: Event, room_name: str = "", international: bool = False):
         if event.arrangement.audience:
@@ -157,13 +157,15 @@ class DisplayData(CamelCaseMixin):
                 self.starting_soon = "Starting soon"
             self.arrangement_name = event.arrangement.name_en
             if event.arrangement.audience:
-                self.audience_name = event.arrangement.audience.name_en
-            self.arrangement_type_name = event.arrangement.arrangement_type.name_en
+                if event.arrangement.audience.name_en:
+                    self.audience_name = event.arrangement.audience.name_en
+            if event.arrangement.arrangement_type.name_en:
+                self.arrangement_type_name = event.arrangement.arrangement_type.name_en
 
 
 class DisplayCombo(CamelCaseMixin):
     title: str
-    css_path: Optional[str]
+    css_path: Optional[str] = ""
     data: List[DisplayData]
 
 

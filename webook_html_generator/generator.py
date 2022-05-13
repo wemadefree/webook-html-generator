@@ -74,6 +74,9 @@ class Generator:
                                 elif event.arrangement.meeting_place:
                                     self.adding_to_screen_showcase(self.show_structure.get(sl).get(se),
                                                          event, room_name=event.arrangement.meeting_place)
+                                else:
+                                    self.adding_to_screen_showcase(self.show_structure.get(sl).get(se),
+                                                                   event, room_name="")
             except Exception as ex:
                 print(f"{datetime.datetime.now()} - Error in arranging events: Details: {ex}")
 
