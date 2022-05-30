@@ -100,11 +100,13 @@ class Generator:
         if event.arrangement.name:
             display_data = DisplayData()
             display_data.set_fields(event, room_name=room_name, international=False)
-            screen_showcase.append(display_data)
+            if len(screen_showcase) < int(self.config.max_screen_items):
+                screen_showcase.append(display_data)
         if event.arrangement.name_en:
             display_data = DisplayData()
             display_data.set_fields(event, room_name=room_name, international=True)
-            screen_showcase.append(display_data)
+            if len(screen_showcase) < int(self.config.max_screen_items):
+                screen_showcase.append(display_data)
 
     def initialize(self):
         self.data_handler = DataHandler(self.config)

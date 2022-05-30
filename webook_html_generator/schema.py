@@ -130,12 +130,12 @@ class DisplayData(CamelCaseMixin):
             self.audience_icon = event.arrangement.audience.icon_class
         self.room_name = room_name
 
-        local_start_time = event.start.astimezone(pytz.timezone("Europe/Oslo"))
-        start_time = local_start_time.strftime("%H.%M")
-        local_end_time = event.end.astimezone(pytz.timezone("Europe/Oslo"))
-        end_time = local_end_time.strftime("%H.%M")
-        current_day_no = days_in_no[event.start.weekday()]
-        current_day_en = event.start.strftime('%A')
+        local_start_time: datetime.datetime = event.start.astimezone(pytz.timezone("Europe/Oslo"))
+        start_time: str = local_start_time.strftime("%H.%M")
+        local_end_time: datetime.datetime = event.end.astimezone(pytz.timezone("Europe/Oslo"))
+        end_time: str = local_end_time.strftime("%H.%M")
+        current_day_no: str = days_in_no[event.start.weekday()]
+        current_day_en: str = event.start.strftime('%A')
         if event.start.date() == datetime.date.today():
             self.event_time = "{0}-{1}".format(start_time, end_time)
         else:
@@ -144,8 +144,8 @@ class DisplayData(CamelCaseMixin):
             else:
                 self.event_time = "{0} {1}-{2}".format(current_day_no, start_time, end_time)
 
-        now = datetime.datetime.now().replace(tzinfo=utc)
-        starting_soon_period = (datetime.datetime.now() + datetime.timedelta(minutes=60)).replace(tzinfo=utc)
+        now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+        starting_soon_period = (now + datetime.timedelta(minutes=60))
 
         if not international:
             if event.start > now and event.start < starting_soon_period:
