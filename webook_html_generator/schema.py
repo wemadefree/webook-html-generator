@@ -130,8 +130,10 @@ class DisplayData(CamelCaseMixin):
             self.audience_icon = event.arrangement.audience.icon_class
         self.room_name = room_name
 
-        start_time = event.start.strftime("%H.%M")
-        end_time = event.end.strftime("%H.%M")
+        local_start_time = event.start.astimezone(pytz.timezone("Europe/Oslo"))
+        start_time = local_start_time.strftime("%H.%M")
+        local_end_time = event.end.astimezone(pytz.timezone("Europe/Oslo"))
+        end_time = local_end_time.strftime("%H.%M")
         current_day_no = days_in_no[event.start.weekday()]
         current_day_en = event.start.strftime('%A')
         if event.start.date() == datetime.date.today():
@@ -143,17 +145,17 @@ class DisplayData(CamelCaseMixin):
                 self.event_time = "{0} {1}-{2}".format(current_day_no, start_time, end_time)
 
         now = datetime.datetime.now().replace(tzinfo=utc)
-        in_half_hour = (datetime.datetime.now() + datetime.timedelta(minutes=530)).replace(tzinfo=utc)
+        starting_soon_period = (datetime.datetime.now() + datetime.timedelta(minutes=60)).replace(tzinfo=utc)
 
         if not international:
-            if event.start > now and event.start < in_half_hour:
+            if event.start > now and event.start < starting_soon_period:
                 self.starting_soon = "Starter snart"
             self.arrangement_name = event.arrangement.name
             if event.arrangement.audience:
                 self.audience_name = event.arrangement.audience.name
             self.arrangement_type_name = event.arrangement.arrangement_type.name
         else:
-            if event.start > now and event.start < in_half_hour:
+            if event.start > now and event.start < starting_soon_period:
                 self.starting_soon = "Starting soon"
             self.arrangement_name = event.arrangement.name_en
             if event.arrangement.audience:

@@ -1,6 +1,7 @@
 import datetime
 import json
 import requests
+import pytz
 from typing import List
 from webook_html_generator.schema import (
     DisplayLayout, Login, Token, Event, ScreenResource, Location, Room)
@@ -101,8 +102,8 @@ class DataHandler:
             req: requests.Response = self._make_request(self.config.events_url)
             event_dict = json.loads(req.content)
             events: List[Event] = []
-            for ev in event_dict:
-                events.append(Event(**ev))
+            for ev_dct in event_dict:
+                events.append(Event(**ev_dct))
             return events
         except:
             return None
@@ -118,3 +119,4 @@ class DataHandler:
             return locs
         except:
             return None
+
