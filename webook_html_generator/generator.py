@@ -117,8 +117,9 @@ class Generator:
             print(f"{datetime.datetime.now()} - Error in preparing folder structure: Details: datahandler not sett")
             return False
 
-    def render_html(self, all_events: List[Event]):
-        self.arrange_for_display(all_events)
+    def render_html(self):
+        self.arrange_for_display(self.data_handler.current_events)
+        self.arrange_for_display(self.data_handler.next_events)
         for loc in self.show_structure:
             for key in self.show_structure[loc]:
                 try:
@@ -147,7 +148,7 @@ class Generator:
         while not self.data_handler.validate():
             self.initialize()
             time.sleep(30)
-        self.render_html(self.data_handler.events)
+        self.render_html()
 
 
 

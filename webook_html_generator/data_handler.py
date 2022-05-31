@@ -17,11 +17,12 @@ class DataHandler:
         self.screens: List[ScreenResource] = None
         self.rooms: List[Room] = None
         self.locations: List[Location] = None
-        self.events: List[Event] = None
+        self.next_events: List[Event] = None
+        self.current_events: List[Event] = None
         self.initialize()
 
     def validate(self):
-        if self.layouts and self.screens and self.rooms and self.locations and self.events:
+        if self.layouts and self.screens and self.rooms and self.locations and self.next_events:
             return True
         return False
 
@@ -30,7 +31,8 @@ class DataHandler:
         self.layouts: List[DisplayLayout] = self._get_display_layouts()
         self.screens: List[ScreenResource] = self._get_screens()
         self.locations: List[Location] = self._get_locations()
-        self.events: List[Event] = self._get_next_events()
+        self.next_events: List[Event] = self._get_next_events()
+        self.current_events: List[Event] = self._get_current_events()
         self.rooms: List[Room] = self._get_rooms()
 
     def refresh_token(self):
@@ -69,7 +71,8 @@ class DataHandler:
             for sett in setting_dict:
                 settings.append(DisplayLayout(**sett))
             return settings
-        except:
+        except Exception as ex:
+            print(f"{datetime.datetime.now()} - Error API call: Details: {ex}")
             return None
 
     def _get_screens(self) -> List[ScreenResource]:
@@ -81,7 +84,8 @@ class DataHandler:
             for sett in screen_dict:
                 screens.append(ScreenResource(**sett))
             return screens
-        except:
+        except Exception as ex:
+            print(f"{datetime.datetime.now()} - Error API call: Details: {ex}")
             return None
 
     def _get_rooms(self) -> List[Room]:
@@ -93,19 +97,34 @@ class DataHandler:
             for sett in room_dict:
                 rooms.append(Room(**sett))
             return rooms
-        except:
+        except Exception as ex:
+            print(f"{datetime.datetime.now()} - Error API call: Details: {ex}")
             return None
 
     def _get_next_events(self) -> List[Event]:
         """Returns the events for a request"""
         try:
-            req: requests.Response = self._make_request(self.config.events_url)
+            req: requests.Response = self._make_request(self.config.next_events_url)
             event_dict = json.loads(req.content)
             events: List[Event] = []
             for ev_dct in event_dict:
                 events.append(Event(**ev_dct))
             return events
-        except:
+        except Exception as ex:
+            print(f"{datetime.datetime.now()} - Error API call: Details: {ex}")
+            return None
+
+    def _get_current_events(self) -> List[Event]:
+        """Returns the current events for a request"""
+        try:
+            req: requests.Response = self._make_request(self.config.current_events_url)
+            event_dict = json.loads(req.content)
+            events: List[Event] = []
+            for ev_dct in event_dict:
+                events.append(Event(**ev_dct))
+            return events
+        except Exception as ex:
+            print(f"{datetime.datetime.now()} - Error API call: Details: {ex}")
             return None
 
     def _get_locations(self) -> List[Location]:
@@ -117,6 +136,7 @@ class DataHandler:
             for l in loc_dict:
                 locs.append(Location(**l))
             return locs
-        except:
+        except Exception as ex:
+            print(f"{datetime.datetime.now()} - Error API call: Details: {ex}")
             return None
 
