@@ -73,13 +73,13 @@ class Generator:
                             if event.arrangement.location:
                                 sl = slugify(event.arrangement.location.name)
                                 se = slugify(event_layout.name)
-                                if event.rooms:
+                                if event.arrangement.meeting_place:
+                                    self.adding_to_screen_showcase(self.show_structure.get(sl).get(se),
+                                                                   event, room_name=event.arrangement.meeting_place)
+                                elif event.rooms:
                                     room_names = [room.name for room in event.rooms]
                                     self.adding_to_screen_showcase(self.show_structure.get(sl).get(se),
                                                          event, room_name=",".join(room_names))
-                                elif event.arrangement.meeting_place:
-                                    self.adding_to_screen_showcase(self.show_structure.get(sl).get(se),
-                                                         event, room_name=event.arrangement.meeting_place)
                                 else:
                                     self.adding_to_screen_showcase(self.show_structure.get(sl).get(se),
                                                                    event, room_name="")

@@ -94,6 +94,8 @@ class Arrangement(CamelCaseMixin):
     starts: Optional[datetime.date]
     ends: Optional[datetime.date]
     meeting_place: Optional[str]
+    display_text: Optional[str]
+    display_text_en: Optional[str]
     audience: Optional[Audience]
     display_layouts: Optional[List[DisplayLayoutName]]
     arrangement_type: Optional[ArrangementType]
@@ -150,14 +152,20 @@ class DisplayData(CamelCaseMixin):
         if not international:
             if event.start > now and event.start < starting_soon_period:
                 self.starting_soon = "Starter snart"
-            self.arrangement_name = event.arrangement.name
+            if event.arrangement.display_text:
+                self.arrangement_name = event.arrangement.display_text
+            else:
+                self.arrangement_name = event.arrangement.name
             if event.arrangement.audience:
                 self.audience_name = event.arrangement.audience.name
             self.arrangement_type_name = event.arrangement.arrangement_type.name
         else:
             if event.start > now and event.start < starting_soon_period:
                 self.starting_soon = "Starting soon"
-            self.arrangement_name = event.arrangement.name_en
+            if event.arrangement.display_text_en:
+                self.arrangement_name = event.arrangement.display_text_en
+            else:
+                self.arrangement_name = event.arrangement.name_en
             if event.arrangement.audience:
                 if event.arrangement.audience.name_en:
                     self.audience_name = event.arrangement.audience.name_en
