@@ -29,36 +29,51 @@ class Generator:
                 try:
                     if room.location_id == loc.id:
                         self.prepared_data_source[slugify(loc.name)][slugify(room.name)] = list()
-                        shutil.copytree('template/whatson',
-                                        f'{self.config.upload_dir}/{slugify(loc.name)}/{slugify(room.name)}/', dirs_exist_ok=True)
+                        source = 'template/whatson'
+                        dest = f'{self.config.upload_dir}/{slugify(loc.name)}/{slugify(room.name)}'
+                        self._copy_resources(source, dest, resources=['css', 'fonts'])
+
                 except Exception as ex:
                     print(f"{datetime.datetime.now()} - Error in preparing folder structure: Details: {ex}")
             for layout in self.data_handler.layouts:
                 try:
                     if not layout.is_room_based:
                         self.prepared_data_source[slugify(loc.name)][slugify(slugify(layout.name))] = list()
-                        if slugify(layout.name) == "mmg":
-                            shutil.copytree('template/mmg',
-                                            f'{self.config.upload_dir}/{slugify(loc.name)}/{slugify(layout.name)}/',
-                                            dirs_exist_ok=True)
-                            shutil.copytree('template/mmg',
-                                            f'{self.config.upload_dir}/{slugify(loc.name)}/{slugify(layout.name+"-en")}/',
-                                            dirs_exist_ok=True)
+                        if slugify(layout.name) == 'mmg':
+                            source = 'template/mmg'
+                            dest = f'{self.config.upload_dir}/{slugify(loc.name)}/mmg'
+                            self._copy_resources(source, dest, resources=['css', 'fonts'])
+                            dest = f'{self.config.upload_dir}/{slugify(loc.name)}/mmg-en'
+                            self._copy_resources(source, dest, resources=['css', 'fonts'])
                         else:
-                            shutil.copytree('template/whatson',
-                                            f'{self.config.upload_dir}/{slugify(loc.name)}/{slugify(layout.name)}/',
-                                            dirs_exist_ok=True)
+                            source = 'template/whatson'
+                            dest = f'{self.config.upload_dir}/{slugify(loc.name)}/{slugify(layout.name)}'
+                            self._copy_resources(source, dest, resources=['css', 'fonts'])
                 except Exception as ex:
                     print(f"{datetime.datetime.now()} - Error in preparing folder structure: Details: {ex}")
             for screen_res in self.data_handler.screens:
                 try:
                     if not screen_res.room_id:
                         self.prepared_data_source[slugify(loc.name)][slugify(slugify(screen_res.screen_model))] = list()
-                        shutil.copytree('template/whatson',
-                                        f'{self.config.upload_dir}/{slugify(loc.name)}/{slugify(screen_res.screen_model)}/',
-                                        dirs_exist_ok=True)
+                        source = 'template/whatson'
+                        dest = f'{self.config.upload_dir}/{slugify(loc.name)}/{slugify(screen_res.screen_model)}'
+                        self._copy_resources(source, dest, resources=['css', 'fonts'])
                 except Exception as ex:
                     print(f"{datetime.datetime.now()} - Error in preparing folder structure: Details: {ex}")
+
+    def _copy_resources(self, source: str, dest: str, resources: List):
+        """
+        Copying resources from templates like css, fonts to appropriate folders
+        :param source: source folder of  - relative path
+        :param dest: destination folder path
+        :param resources: list of resource names -> Example: resource = [css, fonts]
+        :return: None
+        """
+        if resources:
+            for resource_name in resources:
+                shutil.copytree(f'{source}/{resource_name}', f'{dest}/{resource_name}/', dirs_exist_ok=True)
+        else:
+            shutil.copytree(f'{source}', f'{dest}/', dirs_exist_ok=True)
 
     def arrange_for_display(self, all_events: List[Event]):
         layout_dict = {layout.name: layout for layout in self.data_handler.layouts}
@@ -94,10 +109,10 @@ class Generator:
 
     def _copy_mmg_route(self, dest_part: str ='whatson/mmg'):
         try:
-            shutil.copytree(f'{self.config.upload_dir}/{self.config.mmg_dir}',
-                            f'{self.config.upload_dir}/{dest_part}/', dirs_exist_ok=True)
-            shutil.copytree(f'{self.config.upload_dir}/{self.config.mmg_dir+"-en"}',
-                            f'{self.config.upload_dir}/{dest_part+"_en"}/', dirs_exist_ok=True)
+            source = f'{self.config.upload_dir}/{self.config.mmg_dir}'
+            dest = f'{self.config.upload_dir}/{dest_part}'
+            self._copy_resources(source, dest, resources=None)
+            self._copy_resources(source+'-en', dest+'-en', resources=None)
         except Exception as ex:
             print(f"{datetime.datetime.now()} - Error in copy mmg files: Details: {ex}")
 
@@ -133,10 +148,10 @@ class Generator:
             for key in self.prepared_data_source[loc]:
                 try:
                     if key in ('mmg', 'mmg-en'):
-                        with open(f'template/mmg/index.html', 'r', encoding="utf-8") as f:
+                        with open(f'template/mmg/_index.html', 'r', encoding="utf-8") as f:
                             contents = f.read()
                     else:
-                        with open(f'template/whatson/index.html', 'r', encoding="utf-8") as f:
+                        with open(f'template/whatson/_index.html', 'r', encoding="utf-8") as f:
                             contents = f.read()
                     template = jinja2.Template(contents)
                     display = DisplayCombo(title=key, data=self.prepared_data_source[loc][key])
