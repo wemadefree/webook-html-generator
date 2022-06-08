@@ -122,13 +122,14 @@ month_in_no = ["", "januar", "februar", "mars", "april", "mai", "juni", "juli",
 
 
 class DisplayData(CamelCaseMixin):
-    starting_soon: str = ""
     event_time: str = ""
     arrangement_name: str = ""
     audience_name: str = ""
     audience_icon: str = ""
     arrangement_type_name: str = ""
     room_name: Optional[str] = ""
+    international: bool = False
+    starting_soon: str = ""
 
     def _set_time(self, event: Event, international: bool):
         local_start_time: datetime.datetime = event.start.astimezone(pytz.timezone("Europe/Oslo"))
@@ -149,6 +150,7 @@ class DisplayData(CamelCaseMixin):
 
         self.room_name = room_name
         self._set_time(event, international)
+        self.international = international
 
         now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
         starting_soon_period = (now + datetime.timedelta(minutes=60))

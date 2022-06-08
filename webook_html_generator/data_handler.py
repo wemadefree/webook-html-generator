@@ -19,14 +19,26 @@ class DataHandler:
         self.locations: List[Location] = None
         self.next_events: List[Event] = None
         self.current_events: List[Event] = None
-        self.initialize()
+        self.is_valid: bool = False
 
-    def validate(self):
-        if self.layouts and self.screens and self.rooms and self.locations and self.next_events:
-            return True
-        return False
+    def _validate(self):
+        if self.layouts and self.screens and self.rooms and self.locations \
+                and (self.next_events or self.current_events):
+            self.is_valid = True
+        else:
+            self.is_valid = False
 
     def initialize(self):
+        self.layouts: List[DisplayLayout] = None
+        self.screens: List[ScreenResource] = None
+        self.locations: List[Location] = None
+        self.next_events: List[Event] = None
+        self.current_events: List[Event] = None
+        self.rooms: List[Room] = None
+        self.is_valid = False
+
+    def retrieve_data(self):
+        self.initialize()
         self._get_token()
         self.layouts: List[DisplayLayout] = self._get_display_layouts()
         self.screens: List[ScreenResource] = self._get_screens()
@@ -34,6 +46,7 @@ class DataHandler:
         self.next_events: List[Event] = self._get_next_events()
         self.current_events: List[Event] = self._get_current_events()
         self.rooms: List[Room] = self._get_rooms()
+        self._validate()
 
     def refresh_token(self):
         return self._get_token()
