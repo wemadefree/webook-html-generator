@@ -120,6 +120,7 @@ month_in_no = ["", "januar", "februar", "mars", "april", "mai", "juni", "juli",
                 "august", "september", "oktober", "november", "desember"
                ]
 
+
 class DisplayData(CamelCaseMixin):
     starting_soon: str = ""
     event_time: str = ""
