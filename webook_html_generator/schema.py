@@ -116,7 +116,9 @@ class Event(CamelCaseMixin):
 
 
 days_in_no = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"]
-
+month_in_no = ["", "januar", "februar", "mars", "april", "mai", "juni", "juli",
+                "august", "september", "oktober", "november", "desember"
+               ]
 
 class DisplayData(CamelCaseMixin):
     starting_soon: str = ""
@@ -127,11 +129,7 @@ class DisplayData(CamelCaseMixin):
     arrangement_type_name: str = ""
     room_name: Optional[str] = ""
 
-    def set_fields(self, event: Event, room_name: str = "", international: bool = False):
-        if event.arrangement.audience:
-            self.audience_icon = event.arrangement.audience.icon_class
-        self.room_name = room_name
-
+    def _set_time(self, event: Event, international: bool):
         local_start_time: datetime.datetime = event.start.astimezone(pytz.timezone("Europe/Oslo"))
         start_time: str = local_start_time.strftime("%H.%M")
         local_end_time: datetime.datetime = event.end.astimezone(pytz.timezone("Europe/Oslo"))
@@ -146,6 +144,11 @@ class DisplayData(CamelCaseMixin):
             else:
                 self.event_time = "{0} {1}-{2}".format(current_day_no, start_time, end_time)
 
+    def set_fields(self, event: Event, room_name: str = "", international: bool = False):
+
+        self.room_name = room_name
+        self._set_time(event, international)
+
         now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
         starting_soon_period = (now + datetime.timedelta(minutes=60))
 
@@ -158,6 +161,7 @@ class DisplayData(CamelCaseMixin):
                 self.arrangement_name = event.arrangement.name
             if event.arrangement.audience:
                 self.audience_name = event.arrangement.audience.name
+                self.audience_icon = event.arrangement.audience.icon_class
             self.arrangement_type_name = event.arrangement.arrangement_type.name
         else:
             if event.start > now and event.start < starting_soon_period:
@@ -169,6 +173,7 @@ class DisplayData(CamelCaseMixin):
             if event.arrangement.audience:
                 if event.arrangement.audience.name_en:
                     self.audience_name = event.arrangement.audience.name_en
+                    self.audience_icon = event.arrangement.audience.icon_class
             if event.arrangement.arrangement_type.name_en:
                 self.arrangement_type_name = event.arrangement.arrangement_type.name_en
 
