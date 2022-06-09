@@ -1,4 +1,5 @@
 import datetime
+import logging
 import json
 import requests
 import pytz
@@ -60,7 +61,7 @@ class DataHandler:
             req.raise_for_status()
             self.token = Token(**json.loads(req.content))
         except requests.exceptions.HTTPError as err:
-            print(f"{datetime.datetime.now()} - Unable to get/refresh token . Details: {err}")
+            logging.error(f"Unable to get/refresh token . Details: {err}")
 
     def _make_request(self, url: str) -> requests.Response:
         """Returns the screenresources for a request"""
@@ -71,7 +72,7 @@ class DataHandler:
             req.raise_for_status()
             return req
         except requests.exceptions.HTTPError as err:
-            print(f"{datetime.datetime.now()} - Http Login Error:", err)
+            logging.error(f"Http Login Error: {err}")
             return None
 
     def _get_display_layouts(self) -> List[DisplayLayout]:
@@ -85,7 +86,7 @@ class DataHandler:
                 settings.append(DisplayLayout(**sett))
             return settings
         except Exception as ex:
-            print(f"{datetime.datetime.now()} - Error API call: Details: {ex}")
+            logging.error(f"Error get_layouts API call. Details: {ex}")
             return None
 
     def _get_screens(self) -> List[ScreenResource]:
@@ -98,7 +99,7 @@ class DataHandler:
                 screens.append(ScreenResource(**sett))
             return screens
         except Exception as ex:
-            print(f"{datetime.datetime.now()} - Error API call: Details: {ex}")
+            logging.error(f"Error get_screen API call. Details: {ex}")
             return None
 
     def _get_rooms(self) -> List[Room]:
@@ -111,7 +112,7 @@ class DataHandler:
                 rooms.append(Room(**sett))
             return rooms
         except Exception as ex:
-            print(f"{datetime.datetime.now()} - Error API call: Details: {ex}")
+            logging.error(f"Error get_room API call. Details: {ex}")
             return None
 
     def _get_next_events(self) -> List[Event]:
@@ -124,7 +125,7 @@ class DataHandler:
                 events.append(Event(**ev_dct))
             return events
         except Exception as ex:
-            print(f"{datetime.datetime.now()} - Error API call: Details: {ex}")
+            logging.error(f"Error get_next_events API call. Details: {ex}")
             return None
 
     def _get_current_events(self) -> List[Event]:
@@ -137,7 +138,7 @@ class DataHandler:
                 events.append(Event(**ev_dct))
             return events
         except Exception as ex:
-            print(f"{datetime.datetime.now()} - Error API call: Details: {ex}")
+            logging.error(f"Error get_current_events API call. Details: {ex}")
             return None
 
     def _get_locations(self) -> List[Location]:
@@ -150,6 +151,6 @@ class DataHandler:
                 locs.append(Location(**l))
             return locs
         except Exception as ex:
-            print(f"{datetime.datetime.now()} - Error API call: Details: {ex}")
+            logging.error(f"Error get_locations API call. Details: {ex}")
             return None
 

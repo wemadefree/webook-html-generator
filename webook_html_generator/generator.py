@@ -1,4 +1,5 @@
 import datetime
+import logging
 import jinja2
 import shutil
 import time
@@ -34,7 +35,7 @@ class Generator:
                         self._copy_resources(source, dest, resources=['css', 'fonts'])
 
                 except Exception as ex:
-                    print(f"{datetime.datetime.now()} - Error in preparing folder structure: Details: {ex}")
+                    logging.error(f"Error in preparing folder structure for rooms: Details: {ex}")
             for layout in self.data_handler.layouts:
                 try:
                     if not layout.is_room_based:
@@ -50,7 +51,7 @@ class Generator:
                             dest = f'{self.config.upload_dir}/{slugify(loc.name)}/{slugify(layout.name)}'
                             self._copy_resources(source, dest, resources=['css', 'fonts'])
                 except Exception as ex:
-                    print(f"{datetime.datetime.now()} - Error in preparing folder structure: Details: {ex}")
+                    logging.error(f"Error in preparing folder structure for layouts: Details: {ex}")
             for screen_res in self.data_handler.screens:
                 try:
                     if not screen_res.room_id:
@@ -59,7 +60,7 @@ class Generator:
                         dest = f'{self.config.upload_dir}/{slugify(loc.name)}/{slugify(screen_res.screen_model)}'
                         self._copy_resources(source, dest, resources=['css', 'fonts'])
                 except Exception as ex:
-                    print(f"{datetime.datetime.now()} - Error in preparing folder structure: Details: {ex}")
+                    logging.error(f"Error in preparing folder structure for screen resources: Details: {ex}")
 
     def _copy_resources(self, source: str, dest: str, resources: List):
         """
@@ -105,7 +106,7 @@ class Generator:
                                     self.add_event_to_screen_showcase(self.prepared_data_source.get(sl), se,
                                                                    event, room_name="")
             except Exception as ex:
-                print(f"{datetime.datetime.now()} - Error in arranging events: Details: {ex}")
+                logging.error(f"Error in arranging events: Details: {ex}")
 
     def _copy_mmg_route(self, dest_part: str ='whatson/mmg'):
         try:
@@ -114,7 +115,7 @@ class Generator:
             self._copy_resources(source, dest, resources=None)
             self._copy_resources(source+'-en', dest+'-en', resources=None)
         except Exception as ex:
-            print(f"{datetime.datetime.now()} - Error in copy mmg files: Details: {ex}")
+            logging.error(f"Error in copy mmg files to whatson folder: Details: {ex}")
 
     def custom_activities(self):
         self._copy_mmg_route()
@@ -163,7 +164,7 @@ class Generator:
                     with open(f'{self.config.upload_dir}/{loc}/{key}/index.html', 'w', encoding="utf-8") as f:
                         f.write(filled_template)
                 except Exception as ex:
-                    print(f"{datetime.datetime.now()} - Error in rendering {loc}/{key} html: Details: {ex}")
+                    logging.error(f"Error in rendering {loc}/{key} html: Details: {ex}")
         self.custom_activities()
 
     def _separate_mmg(self, data_source):
@@ -182,11 +183,13 @@ class Generator:
             data_source['mmg-en'] = mmg_en
 
     def handler(self):
-        print(f"{datetime.datetime.now()} - Try to generate html")
+        logging.info(f"-------------------------------------------------------------------------------------")
+        logging.info(f"New interation of generating started")
         self.data_handler = DataHandler(self.config)
         self.data_handler.retrieve_data()
 
         while not self.data_handler.is_valid:
+            logging.warning(f"Data handler is not valid, please check. Trying to retrieve data")
             self.data_handler.retrieve_data()
             time.sleep(30)
         self.render_html()
