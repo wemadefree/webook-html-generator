@@ -17,10 +17,12 @@ class Generator:
         self.config = config
         self.data_handler: DataHandler = None
         self.prepared_data_source: dict = None
+        self.local_to_international_keys: dict = {}
 
     def _prepare_data_sources(self):
 
         self.prepared_data_source = dict()
+        self.local_to_international_keys: dict = {}
 
         """screendisplay->location->room_name|layout|meeeting_place"""
 
@@ -41,14 +43,18 @@ class Generator:
                     if not layout.is_room_based:
                         self.prepared_data_source[slugify(loc.name)][slugify(slugify(layout.name))] = list()
                         if slugify(layout.name) == 'mmg':
+                            self.local_to_international_keys[slugify(layout.name)] = slugify(layout.name)+'-en'
                             source = 'template/mmg'
                             dest = f'{self.config.upload_dir}/{slugify(loc.name)}/mmg'
                             self._copy_resources(source, dest, resources=['css', 'fonts'])
                             dest = f'{self.config.upload_dir}/{slugify(loc.name)}/mmg-en'
                             self._copy_resources(source, dest, resources=['css', 'fonts'])
                         else:
+                            self.local_to_international_keys[slugify(layout.name)] = slugify(layout.name)+'-en'
                             source = 'template/whatson'
                             dest = f'{self.config.upload_dir}/{slugify(loc.name)}/{slugify(layout.name)}'
+                            self._copy_resources(source, dest, resources=['css', 'fonts'])
+                            dest = f'{self.config.upload_dir}/{slugify(loc.name)}/{slugify(layout.name)}-en'
                             self._copy_resources(source, dest, resources=['css', 'fonts'])
                 except Exception as ex:
                     logging.error(f"Error in preparing folder structure for layouts: Details: {ex}")
@@ -124,29 +130,25 @@ class Generator:
         if event.arrangement.name:
             display_data = DisplayData()
             display_data.set_fields(event, room_name=room_name, international=False)
-            if key == 'mmg':
-                screen_showcase[key].append(display_data)
-            else:
-                if len(screen_showcase[key]) < int(self.config.max_screen_items):
-                    screen_showcase[key].append(display_data)
-
+            screen_showcase[key].append(display_data)
         if event.arrangement.name_en:
             display_data = DisplayData()
             display_data.set_fields(event, room_name=room_name, international=True)
-            if key == 'mmg':
-                screen_showcase[key].append(display_data)
-            else:
-                if len(screen_showcase[key]) < int(self.config.max_screen_items):
-                    screen_showcase[key].append(display_data)
+            screen_showcase[key].append(display_data)
+
+    def _limit_number_of_events_per_screen(self, key: str, event_list):
+        if key not in ('mmg', 'mmg-en'):
+            event_list[key] = event_list[key][0:int(self.config.max_screen_items)]
 
     def render_html(self):
         self._prepare_data_sources()
         self.arrange_for_display(self.data_handler.current_events)
         self.arrange_for_display(self.data_handler.next_events)
         for loc in self.prepared_data_source:
-            self._separate_mmg(self.prepared_data_source[loc])
+            self._separate_local_from_international(self.prepared_data_source[loc])
 
             for key in self.prepared_data_source[loc]:
+                self._limit_number_of_events_per_screen(key, self.prepared_data_source[loc])
                 try:
                     if key in ('mmg', 'mmg-en'):
                         with open(f'template/mmg/_index.html', 'r', encoding="utf-8") as f:
@@ -167,24 +169,25 @@ class Generator:
                     logging.error(f"Error in rendering {loc}/{key} html: Details: {ex}")
         self.custom_activities()
 
-    def _separate_mmg(self, data_source):
+    def _separate_local_from_international(self, data_source):
         """
         This function separate mmg into international and local channel.
         It creates new key 'mmg-en' int data-source which contains list of international events
         :param data_source:
         :return: None
         """
-        if 'mmg' in data_source:
-            mmg_en = []
-            for i, evt in reversed(list(enumerate(data_source['mmg']))):
-                if evt.international:
-                    mmg_en.append(data_source['mmg'].pop(i))
-            mmg_en.reverse()
-            data_source['mmg-en'] = mmg_en
+        for key in self.local_to_international_keys:
+            if key in data_source:
+                key_en = []
+                for i, evt in reversed(list(enumerate(data_source[key]))):
+                    if evt.international:
+                        key_en.append(data_source[key].pop(i))
+                key_en.reverse()
+                data_source[key+'-en'] = key_en
 
     def handler(self):
         logging.info(f"-------------------------------------------------------------------------------------")
-        logging.info(f"New interation of generating started")
+        logging.info(f"New iteration of generating started")
         self.data_handler = DataHandler(self.config)
         self.data_handler.retrieve_data()
 
