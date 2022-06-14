@@ -158,7 +158,9 @@ class DisplayData(CamelCaseMixin):
         if not international:
             if event.start > now and event.start < starting_soon_period:
                 self.starting_soon = "Starter snart"
-            if event.arrangement.display_text:
+            if event.title:
+                self.arrangement_name = event.title
+            elif event.arrangement.display_text:
                 self.arrangement_name = event.arrangement.display_text
             else:
                 self.arrangement_name = event.arrangement.name
@@ -169,7 +171,9 @@ class DisplayData(CamelCaseMixin):
         else:
             if event.start > now and event.start < starting_soon_period:
                 self.starting_soon = "Starting soon"
-            if event.arrangement.display_text_en:
+            if event.title_en:
+                self.arrangement_name = event.title_en
+            elif event.arrangement.display_text_en:
                 self.arrangement_name = event.arrangement.display_text_en
             else:
                 self.arrangement_name = event.arrangement.name_en

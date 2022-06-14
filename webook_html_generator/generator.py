@@ -127,11 +127,11 @@ class Generator:
         self._copy_mmg_route()
 
     def add_event_to_screen_showcase(self, screen_showcase: dict, key: str, event: Event, room_name: str = ""):
-        if event.arrangement.name:
+        if event.arrangement.name or event.title or event.arrangement.display_text:
             display_data = DisplayData()
             display_data.set_fields(event, room_name=room_name, international=False)
             screen_showcase[key].append(display_data)
-        if event.arrangement.name_en:
+        if event.arrangement.name_en or event.title_en or event.arrangement.display_text_en:
             display_data = DisplayData()
             display_data.set_fields(event, room_name=room_name, international=True)
             screen_showcase[key].append(display_data)
