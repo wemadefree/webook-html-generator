@@ -33,6 +33,7 @@ class Location(CamelCaseMixin):
 class Room(CamelCaseMixin):
     id: int
     name: str
+    name_en: Optional[str]
     max_capacity: int
     has_screen: bool
     location_id: Optional[int]
@@ -94,6 +95,7 @@ class Arrangement(CamelCaseMixin):
     starts: Optional[datetime.date]
     ends: Optional[datetime.date]
     meeting_place: Optional[str]
+    meeting_place_en: Optional[str]
     display_text: Optional[str]
     display_text_en: Optional[str]
     audience: Optional[Audience]

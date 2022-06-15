@@ -6,7 +6,7 @@ import time
 from slugify import slugify
 from typing import List
 from webook_html_generator.schema import (DisplayData, DisplayLayout, DisplayCombo,
-                                          Login, Token, Event, ScreenResource,
+                                          Login, Token, Event, ScreenResource, Room,
                                           )
 from webook_html_generator.data_handler import DataHandler
 from webook_html_generator.config import Config
@@ -96,21 +96,13 @@ class Generator:
                                 for room in event.rooms:
                                     sr = slugify(room.name)
                                     self.add_event_to_screen_showcase(self.prepared_data_source.get(sl), sr,
-                                                         event, room_name=room.name)
+                                                         event, 'room_based', room)
                         elif not layout_dict.get(event_layout.name).is_room_based:
                             if event.arrangement.location:
                                 sl = slugify(event.arrangement.location.name)
                                 se = slugify(event_layout.name)
-                                if event.arrangement.meeting_place:
-                                    self.add_event_to_screen_showcase(self.prepared_data_source.get(sl), se,
-                                                                   event, room_name=event.arrangement.meeting_place)
-                                elif event.rooms:
-                                    room_names = [room.name for room in event.rooms]
-                                    self.add_event_to_screen_showcase(self.prepared_data_source.get(sl), se,
-                                                         event, room_name=",".join(room_names))
-                                else:
-                                    self.add_event_to_screen_showcase(self.prepared_data_source.get(sl), se,
-                                                                   event, room_name="")
+                                self.add_event_to_screen_showcase(self.prepared_data_source.get(sl), se,
+                                                                   event, 'layout_based')
             except Exception as ex:
                 logging.error(f"Error in arranging events: Details: {ex}")
 
@@ -126,14 +118,36 @@ class Generator:
     def custom_activities(self):
         self._copy_mmg_route()
 
-    def add_event_to_screen_showcase(self, screen_showcase: dict, key: str, event: Event, room_name: str = ""):
+    def add_event_to_screen_showcase(self, screen_showcase: dict, key: str, event: Event,
+                                     room_name_type: str, room: Room = None):
+        room_name = ''
+        room_name_en = ''
+        if room_name_type == 'room_based' and room:
+            room_name = room.name
+            if room.name_en:
+                room_name_en = room.name_en
+            else:
+                room_name_en = room_name
+        elif room_name_type == 'layout_based':
+            if event.arrangement.meeting_place:
+                room_name = event.arrangement.meeting_place
+                if event.arrangement.meeting_place_en:
+                    room_name_en = event.arrangement.meeting_place_en
+                else:
+                    room_name_en = room_name
+            elif event.rooms:
+                room_names = [room.name for room in event.rooms]
+                room_names_en = [room.name_en if room.name_en else room.name for room in event.rooms]
+                room_name = ",".join(room_names)
+                room_name_en = ",".join(room_names_en)
+
         if event.arrangement.name or event.title or event.arrangement.display_text:
             display_data = DisplayData()
             display_data.set_fields(event, room_name=room_name, international=False)
             screen_showcase[key].append(display_data)
         if event.arrangement.name_en or event.title_en or event.arrangement.display_text_en:
             display_data = DisplayData()
-            display_data.set_fields(event, room_name=room_name, international=True)
+            display_data.set_fields(event, room_name=room_name_en, international=True)
             screen_showcase[key].append(display_data)
 
     def _limit_number_of_events_per_screen(self, key: str, event_list):
