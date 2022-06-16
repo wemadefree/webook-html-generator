@@ -141,10 +141,10 @@ class Generator:
                 room_name = ",".join(room_names)
                 room_name_en = ",".join(room_names_en)
 
-        if event.arrangement.name or event.title or event.arrangement.display_text:
-            display_data = DisplayData()
-            display_data.set_fields(event, room_name=room_name, international=False)
-            screen_showcase[key].append(display_data)
+        display_data = DisplayData()
+        display_data.set_fields(event, room_name=room_name, international=False)
+        screen_showcase[key].append(display_data)
+
         if event.arrangement.name_en or event.title_en or event.arrangement.display_text_en:
             display_data = DisplayData()
             display_data.set_fields(event, room_name=room_name_en, international=True)

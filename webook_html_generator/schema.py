@@ -2,7 +2,7 @@ import datetime
 import pytz
 from common import CamelCaseMixin
 from typing import List, Optional
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, constr
 
 utc = pytz.UTC
 
@@ -32,8 +32,8 @@ class Location(CamelCaseMixin):
 
 class Room(CamelCaseMixin):
     id: int
-    name: str
-    name_en: Optional[str]
+    name: constr(strip_whitespace=True)
+    name_en: Optional[constr(strip_whitespace=True)]
     max_capacity: int
     has_screen: bool
     location_id: Optional[int]
@@ -77,8 +77,8 @@ class DisplayLayoutName(CamelCaseMixin):
 
 class Audience(CamelCaseMixin):
     id: int
-    name: str
-    name_en: Optional[str]
+    name: constr(strip_whitespace=True)
+    name_en: Optional[constr(strip_whitespace=True)]
     icon_class: str
 
 
@@ -90,14 +90,14 @@ class ArrangementType(CamelCaseMixin):
 
 class Arrangement(CamelCaseMixin):
     id: int
-    name: str
-    name_en: Optional[str]
+    name: constr(strip_whitespace=True)
+    name_en: Optional[constr(strip_whitespace=True)]
     starts: Optional[datetime.date]
     ends: Optional[datetime.date]
-    meeting_place: Optional[str]
-    meeting_place_en: Optional[str]
-    display_text: Optional[str]
-    display_text_en: Optional[str]
+    meeting_place: Optional[constr(strip_whitespace=True)]
+    meeting_place_en: Optional[constr(strip_whitespace=True)]
+    display_text: Optional[constr(strip_whitespace=True)]
+    display_text_en: Optional[constr(strip_whitespace=True)]
     audience: Optional[Audience]
     display_layouts: Optional[List[DisplayLayoutName]]
     arrangement_type: Optional[ArrangementType]
@@ -107,8 +107,8 @@ class Arrangement(CamelCaseMixin):
 
 class Event(CamelCaseMixin):
     id: int
-    title: str
-    title_en: Optional[str]
+    title: constr(strip_whitespace=True)
+    title_en: Optional[constr(strip_whitespace=True)]
     start: datetime.datetime
     end: datetime.datetime
     all_day: bool
