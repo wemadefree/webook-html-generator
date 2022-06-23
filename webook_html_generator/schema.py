@@ -164,8 +164,7 @@ class DisplayData(CamelCaseMixin):
                 self.arrangement_name = event.title
             elif event.arrangement.display_text:
                 self.arrangement_name = event.arrangement.display_text
-            else:
-                self.arrangement_name = event.arrangement.name
+
             if event.arrangement.audience:
                 self.audience_name = event.arrangement.audience.name
                 self.audience_icon = event.arrangement.audience.icon_class
@@ -177,8 +176,7 @@ class DisplayData(CamelCaseMixin):
                 self.arrangement_name = event.title_en
             elif event.arrangement.display_text_en:
                 self.arrangement_name = event.arrangement.display_text_en
-            else:
-                self.arrangement_name = event.arrangement.name_en
+
             if event.arrangement.audience:
                 if event.arrangement.audience.name_en:
                     self.audience_name = event.arrangement.audience.name_en
