@@ -145,7 +145,7 @@ class Generator:
         display_data.set_fields(event, room_name=room_name, international=False)
         screen_showcase[key].append(display_data)
 
-        if event.title_en or event.arrangement.display_text_en:
+        if event.title_en:
             display_data = DisplayData()
             display_data.set_fields(event, room_name=room_name_en, international=True)
             screen_showcase[key].append(display_data)
@@ -205,10 +205,14 @@ class Generator:
         self.data_handler = DataHandler(self.config)
         self.data_handler.retrieve_data()
 
+        if not self.data_handler.is_valid:
+            logging.warning(f"Data handler is not valid, please check. Trying to retrieve data")
+        """
         while not self.data_handler.is_valid:
             logging.warning(f"Data handler is not valid, please check. Trying to retrieve data")
             self.data_handler.retrieve_data()
             time.sleep(30)
+        """
         self.render_html()
 
 

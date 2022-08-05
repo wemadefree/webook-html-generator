@@ -96,8 +96,6 @@ class Arrangement(CamelCaseMixin):
     ends: Optional[datetime.date]
     meeting_place: Optional[constr(strip_whitespace=True)]
     meeting_place_en: Optional[constr(strip_whitespace=True)]
-    display_text: Optional[constr(strip_whitespace=True)]
-    display_text_en: Optional[constr(strip_whitespace=True)]
     audience: Optional[Audience]
     display_layouts: Optional[List[DisplayLayoutName]]
     arrangement_type: Optional[ArrangementType]
@@ -113,6 +111,8 @@ class Event(CamelCaseMixin):
     end: datetime.datetime
     all_day: bool
     arrangement: Arrangement
+    display_text: Optional[constr(strip_whitespace=True)]
+    display_text_en: Optional[constr(strip_whitespace=True)]
     display_layouts: Optional[List[DisplayLayoutName]]
     rooms: Optional[List[Room]]
 
@@ -162,8 +162,8 @@ class DisplayData(CamelCaseMixin):
                 self.starting_soon = "Starter snart"
             if event.title:
                 self.arrangement_name = event.title
-            elif event.arrangement.display_text:
-                self.arrangement_name = event.arrangement.display_text
+            elif event.display_text:
+                self.arrangement_name = event.display_text
 
             if event.arrangement.audience:
                 self.audience_name = event.arrangement.audience.name
@@ -174,8 +174,8 @@ class DisplayData(CamelCaseMixin):
                 self.starting_soon = "Starting soon"
             if event.title_en:
                 self.arrangement_name = event.title_en
-            elif event.arrangement.display_text_en:
-                self.arrangement_name = event.arrangement.display_text_en
+            elif event.display_text_en:
+                self.arrangement_name = event.display_text_en
 
             if event.arrangement.audience:
                 if event.arrangement.audience.name_en:
