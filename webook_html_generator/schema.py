@@ -115,6 +115,8 @@ class Event(CamelCaseMixin):
     display_text_en: Optional[constr(strip_whitespace=True)]
     display_layouts: Optional[List[DisplayLayoutName]]
     rooms: Optional[List[Room]]
+    arrangement_type: Optional[ArrangementType]
+    audience: Optional[Audience]
 
 
 days_in_no = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"]
@@ -165,10 +167,16 @@ class DisplayData(CamelCaseMixin):
             elif event.display_text:
                 self.arrangement_name = event.display_text
 
-            if event.arrangement.audience:
+            if event.audience:
+                self.audience_name = event.audience.name
+                self.audience_icon = event.audience.icon_class
+            elif event.arrangement.audience:
                 self.audience_name = event.arrangement.audience.name
                 self.audience_icon = event.arrangement.audience.icon_class
-            self.arrangement_type_name = event.arrangement.arrangement_type.name
+            if event.arrangement_type:
+                self.arrangement_type_name = event.arrangement_type.name
+            else:
+                self.arrangement_type_name = event.arrangement.arrangement_type.name
         else:
             if event.start > now and event.start < starting_soon_period:
                 self.starting_soon = "Starting soon"
@@ -177,11 +185,15 @@ class DisplayData(CamelCaseMixin):
             elif event.display_text_en:
                 self.arrangement_name = event.display_text_en
 
-            if event.arrangement.audience:
-                if event.arrangement.audience.name_en:
-                    self.audience_name = event.arrangement.audience.name_en
-                    self.audience_icon = event.arrangement.audience.icon_class
-            if event.arrangement.arrangement_type.name_en:
+            if event.audience:
+                self.audience_name = event.audience.name_en
+                self.audience_icon = event.audience.icon_class
+            else:
+                self.audience_name = event.arrangement.audience.name_en
+                self.audience_icon = event.arrangement.audience.icon_class
+            if event.arrangement_type:
+                self.arrangement_type_name = event.arrangement_type.name_en
+            else:
                 self.arrangement_type_name = event.arrangement.arrangement_type.name_en
 
 
