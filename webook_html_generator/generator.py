@@ -84,12 +84,10 @@ class Generator:
 
     def arrange_for_display(self, all_events: List[Event]):
         layout_dict = {layout.name: layout for layout in self.data_handler.layouts}
-
         for event in all_events:
-            arr_layout_names = [layout.name for layout in event.arrangement.display_layouts]
             try:
                 for event_layout in event.display_layouts:
-                    if event_layout.name in layout_dict and event_layout.name in arr_layout_names:
+                    if event_layout.name in layout_dict:
                         if layout_dict.get(event_layout.name).is_room_based:
                             if event.arrangement.location:
                                 sl = slugify(event.arrangement.location.name)
@@ -140,7 +138,7 @@ class Generator:
                 room_names_en = [room.name_en if room.name_en else room.name for room in event.rooms]
                 room_name = ",".join(room_names)
                 room_name_en = ",".join(room_names_en)
-
+        print(event)
         display_data = DisplayData()
         display_data.set_fields(event, room_name=room_name, international=False)
         screen_showcase[key].append(display_data)
