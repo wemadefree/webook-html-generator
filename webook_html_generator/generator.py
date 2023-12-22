@@ -41,7 +41,12 @@ class Generator:
             for layout in self.data_handler.layouts:
                 try:
                     if not layout.is_room_based:
-                        self.prepared_data_source[slugify(loc.name)][slugify(slugify(layout.name))] = list()
+                        if slugify(layout.name) == 'welcome-sign':
+                            welcome_sign_prefix_list = ['', 'daily-']
+                            for prefix in welcome_sign_prefix_list:
+                                self.prepared_data_source[slugify(loc.name)][f"{prefix}{slugify(layout.name)}"] = list()
+                        else:
+                            self.prepared_data_source[slugify(loc.name)][slugify(slugify(layout.name))] = list()
                         if slugify(layout.name) == 'mmg':
                             self.local_to_international_keys[slugify(layout.name)] = slugify(layout.name)+'-en'
                             source = 'template/mmg'
@@ -49,6 +54,14 @@ class Generator:
                             self._copy_resources(source, dest, resources=['css', 'fonts'])
                             dest = f'{self.config.upload_dir}/{slugify(loc.name)}/mmg-en'
                             self._copy_resources(source, dest, resources=['css', 'fonts'])
+                        elif slugify(layout.name) == 'welcome-sign':
+                            for prefix in welcome_sign_prefix_list:
+                                self.local_to_international_keys[f"{prefix}{slugify(layout.name)}"] = f"{prefix}{slugify(layout.name)}-en"
+                                source = 'template/whatson'
+                                dest = f'{self.config.upload_dir}/{slugify(loc.name)}/{prefix}{slugify(layout.name)}'
+                                self._copy_resources(source, dest, resources=['css', 'fonts'])
+                                dest = f'{self.config.upload_dir}/{slugify(loc.name)}/{prefix}{slugify(layout.name)}-en'
+                                self._copy_resources(source, dest, resources=['css', 'fonts'])
                         else:
                             self.local_to_international_keys[slugify(layout.name)] = slugify(layout.name)+'-en'
                             source = 'template/whatson'
@@ -101,6 +114,14 @@ class Generator:
                                 se = slugify(event_layout.name)
                                 self.add_event_to_screen_showcase(self.prepared_data_source.get(sl), se,
                                                                    event, 'layout_based')
+                                if se == 'welcome-sign':
+                                    ev_date = event.start.date()
+                                    current_date = datetime.datetime.now().date()
+                                    if ev_date == current_date:
+                                        if len(self.prepared_data_source.get(sl).get('daily-welcome-sign')) < 7:
+                                            self.add_event_to_screen_showcase(self.prepared_data_source.get(sl),
+                                                                              'daily-welcome-sign',
+                                                                              event, 'layout_based')
             except Exception as ex:
                 logging.error(f"Error in arranging events: Details: {ex}")
 
@@ -180,6 +201,24 @@ class Generator:
                 except Exception as ex:
                     logging.error(f"Error in rendering {loc}/{key} html: Details: {ex}")
         self.custom_activities()
+
+    def _generate_daily_whatson_data(self, data_source):
+        """
+        This function separate mmg into international and local channel.
+        It creates new key 'mmg-en' int data-source which contains list of international events
+        :param data_source:
+        :return: None
+        """
+        date_info = datetime.now().date()
+
+        for key in self.local_to_international_keys:
+            if key in data_source:
+                key_en = []
+                for i, evt in reversed(list(enumerate(data_source[key]))):
+                    if evt.international:
+                        key_en.append(data_source[key].pop(i))
+                key_en.reverse()
+                data_source[key+'-en'] = key_en
 
     def _separate_local_from_international(self, data_source):
         """
