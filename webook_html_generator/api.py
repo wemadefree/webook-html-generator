@@ -20,10 +20,7 @@ def sync_from_bucket():
     os.system(f"gsutil rsync -r gs://{Config.google_cloud_bucket} {Config.upload_dir}")
 
 
-app = FastAPI(
-    title="Webook HTML Generator",
-    description="A simple screen generator for webook",
-)
+app = FastAPI(title="htmlgenerator")
 app.mount(
     "/screendisplay", StaticFiles(directory=Config.upload_dir), name="screendisplay"
 )
