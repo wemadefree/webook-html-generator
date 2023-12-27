@@ -12,4 +12,4 @@ RUN apt-get update && apt-get install -y curl gnupg apt-transport-https && \
 ENV UPLOAD_DIR=/app/upload
 ENV MMG_DIR=/app/mmg
 
-CMD ["python", "main.py"]
+CMD ["python", "app/main.py"]
