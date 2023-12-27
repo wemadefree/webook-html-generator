@@ -39,7 +39,6 @@ app.mount(
 
 sync_from_bucket()
 
-
 if __name__ == "__main__":
     uvicorn.run("api:app", host="0.0.0.0", port=8000)
 
@@ -51,7 +50,7 @@ async def root():
 
 @app.get("/generate")
 async def generate():
-    generator = Generator()
+    generator = Generator(config)
     generator.handler()
 
     if Config.google_cloud_sync and Config.google_cloud_bucket:
