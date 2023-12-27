@@ -21,6 +21,7 @@ def load_config() -> Config:
 config: Config = load_config()
 os.makedirs(config.upload_dir, exist_ok=True)
 
+
 def run_rsync_to_bucket():
     """Run rsync to sync the upload_dir with the google cloud bucket"""
     os.system(f"gsutil rsync -r {config.upload_dir} gs://{config.google_cloud_bucket}")
@@ -40,7 +41,7 @@ sync_from_bucket()
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run("api:app", host="0.0.0.0", port=8000)
 
 
 @app.get("/ping")
