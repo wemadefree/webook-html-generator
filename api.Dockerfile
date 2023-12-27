@@ -2,7 +2,7 @@ FROM ghcr.io/mydock/run-poetry:basic11-py3.11-bullseye-po1.7
 
 WORKDIR /app
 
-COPY webook_html_generator/ .
+COPY . .
 
 RUN apt-get update && apt-get install -y curl gnupg apt-transport-https && \
     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg && \
@@ -11,6 +11,6 @@ RUN apt-get update && apt-get install -y curl gnupg apt-transport-https && \
 
 ENV UPLOAD_DIR=/app/upload
 ENV MMG_DIR=/app/mmg
-ENV PYTHONPATH=/app
+ENV PYTHONPATH .
 
-CMD ["python", "api.py"]
+CMD ["python", "webook_html_generator/api.py"]
