@@ -13,8 +13,8 @@ from webook_html_generator.generator import Generator
 
 
 def load_config() -> Config:
-    dotenv_path = Path("../.env")
-    load_dotenv(dotenv_path=dotenv_path)
+    dotenv_path = ".env"
+    load_dotenv(dotenv_path=dotenv_path, override=True)
     return Config()
 
 
@@ -24,7 +24,9 @@ os.makedirs(config.upload_dir, exist_ok=True)
 
 def run_rsync_to_bucket():
     """Run rsync to sync the upload_dir with the google cloud bucket"""
-    os.system(f"gsutil rsync -r {config.upload_dir} gs://{config.google_cloud_bucket}")
+    os.system(
+        f"gsutil -m rsync -r {config.upload_dir} gs://{config.google_cloud_bucket}"
+    )
 
 
 def sync_from_bucket():
@@ -53,7 +55,7 @@ async def generate():
     generator = Generator(config)
     generator.handler()
 
-    if Config.google_cloud_sync and Config.google_cloud_bucket:
+    if config.google_cloud_sync and config.google_cloud_bucket:
         run_rsync_to_bucket()
 
     return {"message": "Generated successfully"}
