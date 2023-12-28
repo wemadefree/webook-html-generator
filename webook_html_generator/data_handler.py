@@ -1,16 +1,24 @@
 import datetime
-import logging
 import json
-import requests
-import pytz
+import logging
 from typing import List
-from webook_html_generator.schema import (
-    DisplayLayout, Login, Token, Event, ScreenResource, Location, Room)
+
+import pytz
+import requests
+
 from webook_html_generator.config import Config
+from webook_html_generator.schema import (
+    DisplayLayout,
+    Event,
+    Location,
+    Login,
+    Room,
+    ScreenResource,
+    Token,
+)
 
 
 class DataHandler:
-
     def __init__(self, config: Config):
         self.config: Config = config
         self.token: Token = None
@@ -23,8 +31,13 @@ class DataHandler:
         self.is_valid: bool = False
 
     def _validate(self):
-        if self.layouts and self.screens and self.rooms and self.locations \
-                and (self.next_events or self.current_events):
+        if (
+            self.layouts
+            and self.screens
+            and self.rooms
+            and self.locations
+            and (self.next_events or self.current_events)
+        ):
             self.is_valid = True
         else:
             self.is_valid = False
@@ -63,11 +76,17 @@ class DataHandler:
         except requests.exceptions.HTTPError as err:
             logging.error(f"Unable to get/refresh token . Details: {err}")
 
+            if err.response.status_code == 401:
+                raise Exception("Credentials are invalid")
+
     def _make_request(self, url: str) -> requests.Response:
         """Returns the screenresources for a request"""
         try:
             screen_url = self.config.base_url + url
-            headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer {}'.format(self.token.access_token)}
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer {}".format(self.token.access_token),
+            }
             req = requests.get(screen_url, headers=headers)
             req.raise_for_status()
             return req
@@ -153,4 +172,3 @@ class DataHandler:
         except Exception as ex:
             logging.error(f"Error get_locations API call. Details: {ex}")
             return None
-
