@@ -11,6 +11,9 @@ RUN apt-get update && apt-get install -y curl gnupg apt-transport-https && \
 
 ENV UPLOAD_DIR=/app/upload
 ENV MMG_DIR=/app/mmg
-ENV PYTHONPATH .
 
-CMD ["python", "webook_html_generator/api.py"]
+EXPOSE 8000
+
+WORKDIR /app/webook_html_generator
+
+CMD ["python", "api.py"]
