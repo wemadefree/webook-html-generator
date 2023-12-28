@@ -16,4 +16,6 @@ EXPOSE 8000
 
 WORKDIR /app/webook_html_generator
 
-CMD ["python", "api.py"]
+RUN poetry install
+
+CMD ["poetry", "run", "python", "api.py"]
