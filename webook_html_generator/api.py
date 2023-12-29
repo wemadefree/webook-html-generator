@@ -31,7 +31,7 @@ def run_rsync_to_bucket():
 
 def sync_from_bucket():
     """Sync the upload_dir with the google cloud bucket"""
-    os.system(f"gsutil rsync -r gs://{config.google_cloud_bucket} {config.upload_dir}")
+    os.system(f"gsutil -m rsync -r gs://{config.google_cloud_bucket} {config.upload_dir}")
 
 
 app = FastAPI(title="htmlgenerator")
