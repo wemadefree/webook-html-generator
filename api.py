@@ -1,5 +1,8 @@
 import logging
 import os
+
+os.chdir("/app/webook_html_generator")
+
 from datetime import datetime
 from pathlib import Path
 from typing import Optional

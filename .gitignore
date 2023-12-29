@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 
 webook_html_generator/uploads
+uploads/

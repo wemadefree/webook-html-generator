@@ -1,8 +1,10 @@
 import datetime
-import pytz
-from common import CamelCaseMixin
 from typing import List, Optional
+
+import pytz
 from pydantic import BaseModel, EmailStr, constr
+
+from webook_html_generator.common import CamelCaseMixin
 
 utc = pytz.UTC
 
@@ -58,7 +60,7 @@ class ScreenGroup(CamelCaseMixin):
     group_name: str
     group_name_en: Optional[str]
     quantity: int
-    screens:  Optional[List[ScreenResource]]
+    screens: Optional[List[ScreenResource]]
 
 
 class DisplayLayout(CamelCaseMixin):
@@ -120,9 +122,21 @@ class Event(CamelCaseMixin):
 
 
 days_in_no = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"]
-month_in_no = ["", "januar", "februar", "mars", "april", "mai", "juni", "juli",
-                "august", "september", "oktober", "november", "desember"
-               ]
+month_in_no = [
+    "",
+    "januar",
+    "februar",
+    "mars",
+    "april",
+    "mai",
+    "juni",
+    "juli",
+    "august",
+    "september",
+    "oktober",
+    "november",
+    "desember",
+]
 
 
 class DisplayData(CamelCaseMixin):
@@ -136,28 +150,37 @@ class DisplayData(CamelCaseMixin):
     starting_soon: str = ""
 
     def _set_time(self, event: Event, international: bool):
-        local_start_time: datetime.datetime = event.start.astimezone(pytz.timezone("Europe/Oslo"))
+        local_start_time: datetime.datetime = event.start.astimezone(
+            pytz.timezone("Europe/Oslo")
+        )
         start_time: str = local_start_time.strftime("%H.%M")
-        local_end_time: datetime.datetime = event.end.astimezone(pytz.timezone("Europe/Oslo"))
+        local_end_time: datetime.datetime = event.end.astimezone(
+            pytz.timezone("Europe/Oslo")
+        )
         end_time: str = local_end_time.strftime("%H.%M")
         current_day_no: str = days_in_no[event.start.weekday()]
-        current_day_en: str = event.start.strftime('%A')
+        current_day_en: str = event.start.strftime("%A")
         if event.start.date() == datetime.date.today():
             self.event_time = "{0}-{1}".format(start_time, end_time)
         else:
             if international:
-                self.event_time = "{0} {1}-{2}".format(current_day_en, start_time, end_time)
+                self.event_time = "{0} {1}-{2}".format(
+                    current_day_en, start_time, end_time
+                )
             else:
-                self.event_time = "{0} {1}-{2}".format(current_day_no, start_time, end_time)
+                self.event_time = "{0} {1}-{2}".format(
+                    current_day_no, start_time, end_time
+                )
 
-    def set_fields(self, event: Event, room_name: str = "", international: bool = False):
-
+    def set_fields(
+        self, event: Event, room_name: str = "", international: bool = False
+    ):
         self.room_name = room_name
         self._set_time(event, international)
         self.international = international
 
         now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
-        starting_soon_period = (now + datetime.timedelta(minutes=60))
+        starting_soon_period = now + datetime.timedelta(minutes=60)
 
         if not international:
             if event.start > now and event.start < starting_soon_period:
@@ -201,9 +224,3 @@ class DisplayCombo(CamelCaseMixin):
     title: str
     css_path: Optional[str] = ""
     data: List[DisplayData]
-
-
-
-
-
-
