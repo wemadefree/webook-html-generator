@@ -22,5 +22,5 @@ ENV MMG_DIR=/app/mmg
 EXPOSE 8000
 
 ENV PYTHONPATH .
-
-CMD ["python", "webook_html_generator/api.py"]
+WORKDIR /app/webook_html_generator
+CMD ["python", "api.py"]
