@@ -23,6 +23,4 @@ EXPOSE 8000
 
 ENV PYTHONPATH .
 
-WORKDIR /app
-
 CMD ["python", "webook_html_generator/api.py"]
