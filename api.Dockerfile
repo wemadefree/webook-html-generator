@@ -1,6 +1,13 @@
-FROM ghcr.io/mydock/run-poetry:basic11-py3.11-bullseye-po1.7
+FROM python:3.8
 
 WORKDIR /app
+
+
+RUN pip install poetry
+RUN POETRY_HOME=/opt/poetry python
+RUN poetry config virtualenvs.create false
+COPY ./pyproject.toml ./poetry.lock* /app/
+RUN poetry install --no-root
 
 COPY . .
 
@@ -14,8 +21,8 @@ ENV MMG_DIR=/app/mmg
 
 EXPOSE 8000
 
-WORKDIR /app/webook_html_generator
+ENV PYTHONPATH .
 
-RUN poetry install
+WORKDIR /app
 
-CMD ["poetry", "run", "python", "api.py"]
+CMD ["python", "webook_html_generator/api.py"]
