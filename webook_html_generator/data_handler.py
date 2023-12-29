@@ -42,6 +42,8 @@ class DataHandler:
         else:
             self.is_valid = False
 
+            logging.error(f"Error validating data. Details: {self.__dict__}")
+
     def initialize(self):
         self.layouts: List[DisplayLayout] = None
         self.screens: List[ScreenResource] = None
