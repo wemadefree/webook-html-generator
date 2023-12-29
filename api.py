@@ -9,7 +9,7 @@ from typing import Optional
 
 import uvicorn
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 
 from webook_html_generator.config import Config
@@ -41,7 +41,14 @@ def sync_from_bucket():
     )
 
 
-app = FastAPI(title="htmlgenerator")
+if config.api_code is None:
+    raise ValueError("API_CODE is not set. This value is required.")
+
+if config.produce_swagger:
+    app = FastAPI(title="htmlgenerator")
+else:
+    app = FastAPI(title="htmlgenerator", docs_url=None, redoc_url=None)
+
 app.mount(
     "/screendisplay", StaticFiles(directory=config.upload_dir), name="screendisplay"
 )
@@ -52,13 +59,11 @@ if __name__ == "__main__":
     uvicorn.run("api:app", host="0.0.0.0", port=8000)
 
 
-@app.get("/ping")
-async def root():
-    return {"message": "Pong"}
-
-
 @app.get("/generate")
-async def generate():
+async def generate(request: Request, api_code: str = Header(...)):
+    if api_code != config.api_code:
+        raise HTTPException(status_code=403, detail="Invalid API code")
+
     generator = Generator(config)
     generator.handler()
 

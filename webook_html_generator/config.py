@@ -26,3 +26,6 @@ class Config:
 
         self.google_cloud_sync = os.getenv("GOOGLE_CLOUD_SYNC")
         self.google_cloud_bucket = os.getenv("GOOGLE_CLOUD_BUCKET")
+
+        self.api_code = os.getenv("API_CODE")
+        self.produce_swagger = os.getenv("PRODUCE_SWAGGER", True)
