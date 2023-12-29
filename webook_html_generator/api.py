@@ -1,3 +1,4 @@
+import logging
 import os
 from datetime import datetime
 from pathlib import Path
@@ -14,12 +15,13 @@ from webook_html_generator.generator import Generator
 
 def load_config() -> Config:
     dotenv_path = ".env"
-    load_dotenv(dotenv_path=dotenv_path, override=True)
+    load_dotenv(dotenv_path=dotenv_path, override=False)
     return Config()
 
 
 config: Config = load_config()
 os.makedirs(config.upload_dir, exist_ok=True)
+print({k: v for k, v in config.__dict__.items() if k != "password"})
 
 
 def run_rsync_to_bucket():
@@ -31,7 +33,9 @@ def run_rsync_to_bucket():
 
 def sync_from_bucket():
     """Sync the upload_dir with the google cloud bucket"""
-    os.system(f"gsutil -m rsync -r gs://{config.google_cloud_bucket} {config.upload_dir}")
+    os.system(
+        f"gsutil -m rsync -r gs://{config.google_cloud_bucket} {config.upload_dir}"
+    )
 
 
 app = FastAPI(title="htmlgenerator")
