@@ -148,7 +148,13 @@ class Generator:
             else:
                 room_name_en = room_name
         elif room_name_type == 'layout_based':
-            if event.arrangement.meeting_place:
+            if event.meeting_place:
+                room_name = event.meeting_place
+                if event.meeting_place_en:
+                    room_name_en = event.meeting_place_en
+                else:
+                    room_name_en = room_name
+            elif event.arrangement.meeting_place:
                 room_name = event.arrangement.meeting_place
                 if event.arrangement.meeting_place_en:
                     room_name_en = event.arrangement.meeting_place_en
@@ -156,7 +162,9 @@ class Generator:
                     room_name_en = room_name
             elif event.rooms:
                 room_names = [room.name for room in event.rooms]
-                room_names_en = [room.name_en if room.name_en else room.name for room in event.rooms]
+                room_names_en = [
+                    room.name_en if room.name_en else room.name for room in event.rooms
+                ]
                 room_name = ",".join(room_names)
                 room_name_en = ",".join(room_names_en)
         print(event)
